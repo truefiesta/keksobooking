@@ -53,10 +53,10 @@ var generateLocation = function () {
 /**
  * @description Function generates an array of strings from the strings included in the dictionary.
  * @param {array} dictionary - Array of strings.
- * @return {array} New array of strings of various length from 1 to 10 strings.
+ * @return {array} New array of strings of various length from 1 string to the same number of string as the length of the dictionary.
  */
 var generateArrayOfStrings = function (dictionary) {
-  var resultArrayLength = getRandomInteger(1, 10);
+  var resultArrayLength = getRandomInteger(1, dictionary.length);
   var resultArray = [];
 
   for (var i = 0; i < resultArrayLength; i++) {
@@ -132,11 +132,11 @@ var renderOneMapPin = function (offer, mapPin) {
 
 /**
  * @description Function renders all map pins in the HTML block with a class 'map__pins'.
+ * @param {array} offers - An array of offer objects;
  */
-var renderAllMapPins = function () {
+var renderAllMapPins = function (offers) {
   var mapPin = document.querySelector('#pin').content.querySelector('.map__pin');
   var mapPinsBlock = document.querySelector('.map__pins');
-  var offers = generateOffers(OFFERS_NUMBER);
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < offers.length; i++) {
@@ -153,5 +153,136 @@ var showMap = function () {
   document.querySelector('.map').classList.remove('map--faded');
 };
 
-renderAllMapPins();
+/**
+ * @description Function returns Russian word for offer type;
+ * @param {object} offer - An object with offer data.
+ * @return {string} A Russian word for offer type.
+ */
+var getOfferType = function (offer) {
+  var offerType = '';
+
+  if (offer.offer.type === 'flat') {
+    offerType = 'Квартира';
+  } else if (offer.offer.type === 'bungalo') {
+    offerType = 'Бунгало';
+  } else if (offer.offer.type === 'house') {
+    offerType = 'Дом';
+  } else {
+    offerType = 'Дворец';
+  }
+
+  return offerType;
+};
+
+/**
+ * @description Function renders one offer card on a map.
+ * @param {object} offer - An object with offer data.
+ */
+var renderOneMapCard = function (offer) {
+  var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
+  var mapCardElement = mapCardTemplate.cloneNode(true);
+  var mapCardBlock = document.querySelector('.map');
+  var mapCardFragment = document.createDocumentFragment();
+
+  if (offer.offer.title) {
+    mapCardElement.querySelector('.popup__title').textContent = offer.offer.title;
+  } else {
+    mapCardElement.querySelector('.popup__title').classList.add('hidden');
+  }
+
+  if (offer.offer.address) {
+    mapCardElement.querySelector('.popup__text--address').textContent = offer.offer.address;
+  } else {
+    mapCardElement.querySelector('.popup__text--address').classList.add('hidden');
+  }
+
+  if (offer.offer.price) {
+    mapCardElement.querySelector('.popup__text--price').textContent = offer.offer.price + ' ₽/ночь';
+  } else {
+    mapCardElement.querySelector('.popup__text--price').classList.add('hidden');
+  }
+
+  if (offer.offer.type) {
+    mapCardElement.querySelector('.popup__type').textContent = getOfferType(offer);
+  } else {
+    mapCardElement.querySelector('.popup__type').classList.add('hidden');
+  }
+
+  if (offer.offer.rooms && offer.offer.guests) {
+    mapCardElement.querySelector('.popup__text--capacity').textContent = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
+  } else {
+    mapCardElement.querySelector('.popup__text--capacity').classList.add('hidden');
+  }
+
+  if (offer.offer.checkin && offer.offer.checkout) {
+    mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
+  } else {
+    mapCardElement.querySelector('.popup__text--time').classList.add('hidden');
+  }
+
+  // Альтернативный способ вывода features
+  // var features = mapCardElement.querySelector('.popup__features');
+  // var featuresFromHTML = features.querySelectorAll('.popup__feature');
+  // for (var i = 0; i < featuresFromHTML.length; i++) {
+  //   var featureList = featuresFromHTML[i].classList;
+  //   for (var j = 0; j < featureList.length; j++) {
+  //     if (featureList[j].includes('popup__feature--')) {
+  //       var featureClassSplitArray = featureList[j].split('--');
+  //       var featureClass = featureClassSplitArray[1];
+  //       var offerFeaturesIncluded = offer.offer.features;
+  //       if (!offerFeaturesIncluded.includes(featureClass)) {
+  //         featuresFromHTML[i].remove();
+  //       }
+  //     }
+  //   }
+  // }
+
+  if (offer.offer.features.length > 0) {
+    var features = mapCardElement.querySelector('.popup__features');
+    var featuresFromHTML = features.querySelectorAll('.popup__feature');
+    var featureFromHTML = features.removeChild(featuresFromHTML[0]);
+    for (var featureItemIndex = 1; featureItemIndex < featuresFromHTML.length; featureItemIndex++) {
+      featuresFromHTML[featureItemIndex].remove();
+    }
+    for (var featureIndex = 0; featureIndex < offer.offer.features.length; featureIndex++) {
+      var feature = featureFromHTML.cloneNode(true);
+      feature.classList.remove('popup__feature--wifi');
+      feature.classList.add('popup__feature--' + offer.offer.features[featureIndex]);
+      features.appendChild(feature);
+    }
+  } else {
+    features.classList.add('hidden');
+  }
+
+  if (offer.offer.description) {
+    mapCardElement.querySelector('.popup__description').textContent = offer.offer.description;
+  } else {
+    mapCardElement.querySelector('.popup__description').classList.add('hidden');
+  }
+
+  if (offer.offer.photos.length > 0) {
+    var photos = mapCardElement.querySelector('.popup__photos');
+    var photoFromHTML = photos.removeChild(photos.querySelector('.popup__photo'));
+    for (var photoIndexInOffer = 0; photoIndexInOffer < offer.offer.photos.length; photoIndexInOffer++) {
+      var photo = photoFromHTML.cloneNode(true);
+      photo.src = offer.offer.photos[photoIndexInOffer];
+      photos.appendChild(photo);
+    }
+  } else {
+    photos.classList.add('hidden');
+  }
+
+  if (offer.author.avatar) {
+    mapCardElement.querySelector('.popup__avatar').src = offer.author.avatar;
+  } else {
+    mapCardElement.querySelector('.popup__avatar').classList.add('hidden');
+  }
+
+  mapCardFragment.appendChild(mapCardElement);
+  mapCardBlock.insertBefore(mapCardFragment, mapCardBlock.querySelector('.map__filters-container'));
+};
+
+var offers = generateOffers(OFFERS_NUMBER);
+renderAllMapPins(offers);
+renderOneMapCard(offers[0]);
 showMap();

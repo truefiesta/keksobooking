@@ -276,6 +276,11 @@ var offers = generateOffers(OFFERS_NUMBER);
 var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 // Создаем карточку предложения на основе первого элемента из массива предложений
 var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
+// Находим блок с картой.
+var mapCardBlock = document.querySelector('.map');
+// Выводим карточку предложения перед блоком с классом .map__filters-container в блоке с картой
+mapCardBlock.insertBefore(cardElement, mapCardBlock.querySelector('.map__filters-container'));
+// Выводим все пины предложений на карту.
 renderAllMapPins(offers);
-renderOneMapCard(offers[0]);
+// Убираем эффект затемнения с карты.
 showMap();

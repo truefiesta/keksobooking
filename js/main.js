@@ -170,6 +170,19 @@ var getOfferType = function (offer) {
 };
 
 /**
+ * @description Function returns a string with guests and rooms number if both pieces of information present in the offer object.
+ * @param {object} offer - Offer object.
+ * @return {string} Offer data with rooms and guests number.
+ */
+var getRoomsAndGuests = function (offer) {
+  var roomsAndGuests = '';
+  if (offer.offer.rooms && offer.offer.guests) {
+    roomsAndGuests = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
+  }
+  return roomsAndGuests;
+};
+
+/**
  * @description Function hides HTML element if the offer does not contain information for that element. If offer has text content for the element, function adds that text content in the element and shows the element in HTML.
  * @param {object} element - HTML block with text content.
  * @param {string} elementText Text from the offer that should be in the element's textContent.
@@ -195,18 +208,12 @@ var renderOneMapCard = function (offer, cardTemplate) {
   var mapCardPrice = mapCardElement.querySelector('.popup__text--price');
   var mapCardType = mapCardElement.querySelector('.popup__type');
   var mapCardDescription = mapCardElement.querySelector('.popup__description');
+  var mapCardCapacity = mapCardElement.querySelector('.popup__text--capacity');
 
   hideEmptyTextElement(mapCardTitle, offer.offer.title);
   hideEmptyTextElement(mapCardAddress, offer.offer.address);
   hideEmptyTextElement(mapCardPrice, offer.offer.price);
   hideEmptyTextElement(mapCardType, getOfferType(offer));
-
-  if (offer.offer.rooms && offer.offer.guests) {
-    mapCardElement.querySelector('.popup__text--capacity').textContent = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
-  } else {
-    mapCardElement.querySelector('.popup__text--capacity').classList.add('hidden');
-  }
-
   if (offer.offer.checkin && offer.offer.checkout) {
     mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
   } else {

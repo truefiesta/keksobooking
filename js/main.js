@@ -249,7 +249,8 @@ var renderOneMapCard = function (offer, cardTemplate) {
 
   if (offer.offer.photos.length > 0) {
     var photos = mapCardElement.querySelector('.popup__photos');
-    var photoFromHTML = photos.removeChild(photos.querySelector('.popup__photo'));
+    var photoFromHTML = photos.querySelector('.popup__photo');
+    photos.innerHTML = '';
     for (var photoIndexInOffer = 0; photoIndexInOffer < offer.offer.photos.length; photoIndexInOffer++) {
       var photo = photoFromHTML.cloneNode(true);
       photo.src = offer.offer.photos[photoIndexInOffer];

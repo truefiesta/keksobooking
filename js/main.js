@@ -156,22 +156,17 @@ var showMap = function () {
 /**
  * @description Function returns Russian word for offer type;
  * @param {object} offer - An object with offer data.
- * @return {string} A Russian word for offer type.
+ * @return {string} - a Russian word for the offer type.
  */
 var getOfferType = function (offer) {
-  var offerType = '';
-
-  if (offer.offer.type === 'flat') {
-    offerType = 'Квартира';
-  } else if (offer.offer.type === 'bungalo') {
-    offerType = 'Бунгало';
-  } else if (offer.offer.type === 'house') {
-    offerType = 'Дом';
-  } else {
-    offerType = 'Дворец';
+  switch (offer.offer.type) {
+    case 'flat': return 'Квартира';
+    case 'bungalo': return 'Бунгало';
+    case 'house': return 'Дом';
+    case 'palace': return 'Дворец';
   }
 
-  return offerType;
+  return offer.offer.type;
 };
 
 /**

@@ -183,6 +183,19 @@ var getRoomsAndGuests = function (offer) {
 };
 
 /**
+ * @description Function returns a string with checkin and checkout time if both pieces of information present in the offer object.
+ * @param {object} offer - Offer object.
+ * @return {string} Offer data with checkin and checkout time.
+ */
+var getCheckinAndCheckoutTime = function (offer) {
+  var checkinAndCheckout = '';
+  if (offer.offer.checkin && offer.offer.checkout) {
+    checkinAndCheckout = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
+  }
+  return checkinAndCheckout;
+};
+
+/**
  * @description Function hides HTML element if the offer does not contain information for that element. If offer has text content for the element, function adds that text content in the element and shows the element in HTML.
  * @param {object} element - HTML block with text content.
  * @param {string} elementText Text from the offer that should be in the element's textContent.
@@ -209,16 +222,14 @@ var renderOneMapCard = function (offer, cardTemplate) {
   var mapCardType = mapCardElement.querySelector('.popup__type');
   var mapCardDescription = mapCardElement.querySelector('.popup__description');
   var mapCardCapacity = mapCardElement.querySelector('.popup__text--capacity');
+  var mapCardTime = mapCardElement.querySelector('.popup__text--time');
 
   hideEmptyTextElement(mapCardTitle, offer.offer.title);
   hideEmptyTextElement(mapCardAddress, offer.offer.address);
   hideEmptyTextElement(mapCardPrice, offer.offer.price);
   hideEmptyTextElement(mapCardType, getOfferType(offer));
-  if (offer.offer.checkin && offer.offer.checkout) {
-    mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
-  } else {
-    mapCardElement.querySelector('.popup__text--time').classList.add('hidden');
-  }
+  hideEmptyTextElement(mapCardCapacity, getRoomsAndGuests(offer));
+  hideEmptyTextElement(mapCardTime, getCheckinAndCheckoutTime(offer));
 
   // Альтернативный способ вывода features
   // var features = mapCardElement.querySelector('.popup__features');

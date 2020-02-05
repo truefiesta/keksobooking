@@ -231,30 +231,10 @@ var renderOneMapCard = function (offer, cardTemplate) {
   hideEmptyTextElement(mapCardCapacity, getRoomsAndGuests(offer));
   hideEmptyTextElement(mapCardTime, getCheckinAndCheckoutTime(offer));
 
-  // Альтернативный способ вывода features
-  // var features = mapCardElement.querySelector('.popup__features');
-  // var featuresFromHTML = features.querySelectorAll('.popup__feature');
-  // for (var i = 0; i < featuresFromHTML.length; i++) {
-  //   var featureList = featuresFromHTML[i].classList;
-  //   for (var j = 0; j < featureList.length; j++) {
-  //     if (featureList[j].includes('popup__feature--')) {
-  //       var featureClassSplitArray = featureList[j].split('--');
-  //       var featureClass = featureClassSplitArray[1];
-  //       var offerFeaturesIncluded = offer.offer.features;
-  //       if (!offerFeaturesIncluded.includes(featureClass)) {
-  //         featuresFromHTML[i].remove();
-  //       }
-  //     }
-  //   }
-  // }
-
   if (offer.offer.features.length > 0) {
     var features = mapCardElement.querySelector('.popup__features');
-    var featuresFromHTML = features.querySelectorAll('.popup__feature');
-    var featureFromHTML = features.removeChild(featuresFromHTML[0]);
-    for (var featureItemIndex = 1; featureItemIndex < featuresFromHTML.length; featureItemIndex++) {
-      featuresFromHTML[featureItemIndex].remove();
-    }
+    var featureFromHTML = features.querySelector('.popup__feature');
+    features.innerHTML = '';
     for (var featureIndex = 0; featureIndex < offer.offer.features.length; featureIndex++) {
       var feature = featureFromHTML.cloneNode(true);
       feature.classList.remove('popup__feature--wifi');

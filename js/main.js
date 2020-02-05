@@ -170,38 +170,36 @@ var getOfferType = function (offer) {
 };
 
 /**
- * @description Function renders one offer card on a map.
- * @param {object} offer - An object with offer data.
+ * @description Function hides HTML element if the offer does not contain information for that element. If offer has text content for the element, function adds that text content in the element and shows the element in HTML.
+ * @param {object} element - HTML block with text content.
+ * @param {string} elementText Text from the offer that should be in the element's textContent.
  */
-var renderOneMapCard = function (offer) {
-  var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
-  var mapCardElement = mapCardTemplate.cloneNode(true);
-  var mapCardBlock = document.querySelector('.map');
-  var mapCardFragment = document.createDocumentFragment();
-
-  if (offer.offer.title) {
-    mapCardElement.querySelector('.popup__title').textContent = offer.offer.title;
+var hideEmptyTextElement = function (element, elementText) {
+  if (elementText) {
+    element.textContent = elementText;
   } else {
-    mapCardElement.querySelector('.popup__title').classList.add('hidden');
+    element.classList.add('hidden');
   }
+};
 
-  if (offer.offer.address) {
-    mapCardElement.querySelector('.popup__text--address').textContent = offer.offer.address;
-  } else {
-    mapCardElement.querySelector('.popup__text--address').classList.add('hidden');
-  }
+/**
+ * @description Function creates one offer card.
+ * @param {object} offer - An object with offer data.
+ * @param {object} cardTemplate - HTML object with a template markup.
+ * @return {object} HTML object with one map card.
+ */
+var renderOneMapCard = function (offer, cardTemplate) {
+  var mapCardElement = cardTemplate.cloneNode(true);
+  var mapCardTitle = mapCardElement.querySelector('.popup__title');
+  var mapCardAddress = mapCardElement.querySelector('.popup__text--address');
+  var mapCardPrice = mapCardElement.querySelector('.popup__text--price');
+  var mapCardType = mapCardElement.querySelector('.popup__type');
+  var mapCardDescription = mapCardElement.querySelector('.popup__description');
 
-  if (offer.offer.price) {
-    mapCardElement.querySelector('.popup__text--price').textContent = offer.offer.price + ' ₽/ночь';
-  } else {
-    mapCardElement.querySelector('.popup__text--price').classList.add('hidden');
-  }
-
-  if (offer.offer.type) {
-    mapCardElement.querySelector('.popup__type').textContent = getOfferType(offer);
-  } else {
-    mapCardElement.querySelector('.popup__type').classList.add('hidden');
-  }
+  hideEmptyTextElement(mapCardTitle, offer.offer.title);
+  hideEmptyTextElement(mapCardAddress, offer.offer.address);
+  hideEmptyTextElement(mapCardPrice, offer.offer.price);
+  hideEmptyTextElement(mapCardType, getOfferType(offer));
 
   if (offer.offer.rooms && offer.offer.guests) {
     mapCardElement.querySelector('.popup__text--capacity').textContent = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
@@ -249,11 +247,7 @@ var renderOneMapCard = function (offer) {
     features.classList.add('hidden');
   }
 
-  if (offer.offer.description) {
-    mapCardElement.querySelector('.popup__description').textContent = offer.offer.description;
-  } else {
-    mapCardElement.querySelector('.popup__description').classList.add('hidden');
-  }
+  hideEmptyTextElement(mapCardDescription, offer.offer.description);
 
   if (offer.offer.photos.length > 0) {
     var photos = mapCardElement.querySelector('.popup__photos');
@@ -273,11 +267,15 @@ var renderOneMapCard = function (offer) {
     mapCardElement.querySelector('.popup__avatar').classList.add('hidden');
   }
 
-  mapCardFragment.appendChild(mapCardElement);
-  mapCardBlock.insertBefore(mapCardFragment, mapCardBlock.querySelector('.map__filters-container'));
+  return mapCardElement;
 };
 
+// Генерируем массив предложений (моки)
 var offers = generateOffers(OFFERS_NUMBER);
+// Находит шаблон карточки предложения
+var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
+// Создаем карточку предложения на основе первого элемента из массива предложений
+var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
 renderAllMapPins(offers);
 renderOneMapCard(offers[0]);
 showMap();

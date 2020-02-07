@@ -307,28 +307,12 @@ mapCardBlock.insertBefore(cardElement, mapCardBlock.querySelector('.map__filters
 // renderAllMapPins(offers);
 
 /**
- * @description Function checks if a fieldset has inputs or selects as child nodes.
- * @param {object} fieldsetElement HTML element with a tag name of fieldset.
- * @return {boolean} true - if element has input or select inside.
- */
-var checkIfFieldsetHasInputOrSelect = function (fieldsetElement) {
-  var fieldsetHasInput = fieldsetElement.querySelector('input');
-  var fielsetHasSelect = fieldsetElement.querySelector('select');
-
-  return fieldsetHasInput || fielsetHasSelect;
-};
-
-/**
- * @description Function sets 'disabled' attribute on the element from elements array. If element is a fieldset, it will get 'disabled' attribute only if this fieldset contains inputs or selects inside.
+ * @description Function sets 'disabled' attribute on the element from elements array. If element is a fieldset, it will get 'disabled' attribute.
  * @param {array} elements Array of HTML form elements.
  */
 var disableFormElements = function (elements) {
   for (var i = 0; i < elements.length; i++) {
-    if (elements[i].tagName.toLowerCase() === 'fieldset' && checkIfFieldsetHasInputOrSelect(elements[i])) {
-      elements[i].setAttribute('disabled', '');
-    } else if (elements[i].tagName.toLowerCase() !== 'fieldset') {
-      elements[i].setAttribute('disabled', '');
-    }
+    elements[i].setAttribute('disabled', '');
   }
 };
 
@@ -345,8 +329,6 @@ var enableFormElements = function (elements) {
 // Переменные для работы с DOM элементами формы .ad-form.
 var adForm = document.querySelector('.ad-form');
 var allAdFormFieldsets = adForm.querySelectorAll('fieldset');
-var allAdFormInputs = adForm.querySelectorAll('input');
-var allAdFormSelects = adForm.querySelectorAll('select');
 var adFormAddress = adForm.querySelector('input[name = address]');
 var adFormRooms = adForm.querySelector('select[name = rooms]');
 var adFormGuests = adForm.querySelector('select[name = capacity]');
@@ -375,8 +357,6 @@ var deactivatePage = function () {
   hideAdForm();
 
   // Переводим элементы формы .ad-form в неактивное состояние.
-  disableFormElements(allAdFormInputs);
-  disableFormElements(allAdFormSelects);
   disableFormElements(allAdFormFieldsets);
 };
 
@@ -388,8 +368,6 @@ var activatePage = function () {
   showAdForm();
 
   // Активируем поля формы .ad-form
-  enableFormElements(allAdFormInputs);
-  enableFormElements(allAdFormSelects);
   enableFormElements(allAdFormFieldsets);
 };
 

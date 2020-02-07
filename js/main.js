@@ -1,15 +1,15 @@
 'use strict';
 
-var OFFER_TITLES = ['Уютный дом с видом на сад', 'Стильная комната в лучшем районе города', 'Квартира рядом с метро', 'Сдается комната на 3 месяца', 'Квартира для семьи из трех человек', 'Комната с отдельной ванной', 'Комната с балконом и видом на парк', 'Дворец для пары без детей'];
-var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
-var OFFER_CHECKINS = ['12:00', '13:00', '14:00'];
-var OFFER_CHECKOUTS = ['12:00', '13:00', '14:00'];
-var OFFER_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-var OFFER_DESCRIPTIONS = ['A comfortable space that can accommodate up to 2 people. This apartment is 3mins from Shinjuku by train and also close to Shibuya ! It is a 6-minute walk from the nearest station of the apartment.The apartment is in a residential area so you can sleep peacefully and sleep at night.', 'We have permission for business as hotel, Japan visitors can legally stay* >3 metro stations nearby take you directly to the best Tokyo spots >Bus to Tokyo airports (Tokyo City Air Terminal) is a short walk distance >Neighborhood has traditional shops, pubs, restaurants for true local experience >Grocery&drug stores, ¥100 shops nearby to fill your shopping needs >Ideal for short stay, but we have had many satisfied long-term guests >Checkin until 12am, convenient in case of arrival by late flight', 'Tateishi Tokyo,Quaint Neighborhood around the Station. Many Bars still exist since right after the World War near the station. You can feel what Tokyo was like back in 1940s. Good access to Major spot (15mins-50mins )'];
-var OFFER_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var OFFERS_NUMBER = 8;
-var PIN_WIDTH = 50;
-var PIN_HEIGHT = 70;
+// var OFFER_TITLES = ['Уютный дом с видом на сад', 'Стильная комната в лучшем районе города', 'Квартира рядом с метро', 'Сдается комната на 3 месяца', 'Квартира для семьи из трех человек', 'Комната с отдельной ванной', 'Комната с балконом и видом на парк', 'Дворец для пары без детей'];
+// var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+// var OFFER_CHECKINS = ['12:00', '13:00', '14:00'];
+// var OFFER_CHECKOUTS = ['12:00', '13:00', '14:00'];
+// var OFFER_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+// var OFFER_DESCRIPTIONS = ['A comfortable space that can accommodate up to 2 people. This apartment is 3mins from Shinjuku by train and also close to Shibuya ! It is a 6-minute walk from the nearest station of the apartment.The apartment is in a residential area so you can sleep peacefully and sleep at night.', 'We have permission for business as hotel, Japan visitors can legally stay* >3 metro stations nearby take you directly to the best Tokyo spots >Bus to Tokyo airports (Tokyo City Air Terminal) is a short walk distance >Neighborhood has traditional shops, pubs, restaurants for true local experience >Grocery&drug stores, ¥100 shops nearby to fill your shopping needs >Ideal for short stay, but we have had many satisfied long-term guests >Checkin until 12am, convenient in case of arrival by late flight', 'Tateishi Tokyo,Quaint Neighborhood around the Station. Many Bars still exist since right after the World War near the station. You can feel what Tokyo was like back in 1940s. Good access to Major spot (15mins-50mins )'];
+// var OFFER_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+// var OFFERS_NUMBER = 8;
+// var PIN_WIDTH = 50;
+// var PIN_HEIGHT = 70;
 
 /**
  * @description Function always returns a random number between min and max (both included).
@@ -17,60 +17,62 @@ var PIN_HEIGHT = 70;
  * @param {number} max - Maximum number from a range of numbers.
  * @return {number} A random integer between min (included) and max (included).
  */
-var getRandomInteger = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+// var getRandomInteger = function (min, max) {
+//   return Math.floor(Math.random() * (max - min + 1)) + min;
+// };
 
 /**
  * @description Function returns a random item from an array.
  * @param {Array} array, from which you want to get a random item.
  * @return {*} - random array item
  */
-var getRandomElemenFromArray = function (array) {
-  return array[getRandomInteger(0, array.length - 1)];
-};
+// var getRandomElemenFromArray = function (array) {
+//   return array[getRandomInteger(0, array.length - 1)];
+// };
 
 /**
  * @description Function generates avatar image URL.
  * @param {number} index - Index of the offer.
  * @return {string} URL address of avatar image
  */
-var generateAvatarUrl = function (index) {
-  return 'img/avatars/user0' + (index + 1) + '.png';
-};
+// var generateAvatarUrl = function (index) {
+//   return 'img/avatars/user0' + (index + 1) + '.png';
+// };
 
 /**
  * @description Function returns an object with x an y coordinates to place the pin on map.
  * @return {object} Object represents location with coordinates of an offer.
  */
-var generateLocation = function () {
-  return {
-    'x': getRandomInteger(130, 630),
-    'y': getRandomInteger(130, 630)
-  };
-};
+// var generateLocation = function () {
+//   return {
+//     'x': getRandomInteger(130, 630),
+//     'y': getRandomInteger(130, 630)
+//   };
+// };
 
 /**
  * @description Function generates an array of strings from the strings included in the dictionary.
  * @param {array} dictionary - Array of strings.
  * @return {array} New array of strings of various length from 1 string to the same number of string as the length of the dictionary.
  */
-var generateArrayOfStrings = function (dictionary) {
-  var resultArrayLength = getRandomInteger(1, dictionary.length);
-  var resultArray = [];
+// var generateArrayOfStrings = function (dictionary) {
+//   var resultArrayLength = getRandomInteger(1, dictionary.length);
+//   var resultArray = [];
 
-  for (var i = 0; i < resultArrayLength; i++) {
-    resultArray[i] = getRandomElemenFromArray(dictionary);
-  }
+//   for (var i = 0; i < resultArrayLength; i++) {
+//     resultArray[i] = getRandomElemenFromArray(dictionary);
+//   }
 
-  return resultArray;
-};
+//   return resultArray;
+// };
 
 /**
  * @description Function generates an offer.
  * @param {number} index of an offer.
  * @return {object} One offer.
  */
+
+/*
 var generateOneOffer = function (index) {
   var location = generateLocation();
 
@@ -98,20 +100,21 @@ var generateOneOffer = function (index) {
     }
   };
 };
+*/
 
 /**
  * @description Function generates an array of offers.
  * @param {number} number - Quantity of offers to generate.
  * @return {array} An array of offer objects.
  */
-var generateOffers = function (number) {
-  var offers = [];
-  for (var i = 0; i < number; i++) {
-    offers[i] = generateOneOffer(i);
-  }
+// var generateOffers = function (number) {
+//   var offers = [];
+//   for (var i = 0; i < number; i++) {
+//     offers[i] = generateOneOffer(i);
+//   }
 
-  return offers;
-};
+//   return offers;
+// };
 
 /**
  * @description Function renders one pin on the map.
@@ -119,32 +122,32 @@ var generateOffers = function (number) {
  * @param {object} mapPin - HTML element object that will contain a pin.
  * @return {object} HTML element of one map pin.
  */
-var renderOneMapPin = function (offer, mapPin) {
-  var mapPinElement = mapPin.cloneNode(true);
+// var renderOneMapPin = function (offer, mapPin) {
+//   var mapPinElement = mapPin.cloneNode(true);
 
-  mapPinElement.style.left = (offer.location.x - (PIN_WIDTH / 2)) + 'px';
-  mapPinElement.style.top = offer.location.y - PIN_HEIGHT + 'px';
-  mapPinElement.querySelector('img').src = offer.author.avatar;
-  mapPinElement.querySelector('img').alt = offer.offer.title;
+//   mapPinElement.style.left = (offer.location.x - (PIN_WIDTH / 2)) + 'px';
+//   mapPinElement.style.top = offer.location.y - PIN_HEIGHT + 'px';
+//   mapPinElement.querySelector('img').src = offer.author.avatar;
+//   mapPinElement.querySelector('img').alt = offer.offer.title;
 
-  return mapPinElement;
-};
+//   return mapPinElement;
+// };
 
 /**
  * @description Function renders all map pins in the HTML block with a class 'map__pins'.
  * @param {array} offers - An array of offer objects;
  */
-var renderAllMapPins = function (offers) {
-  var mapPin = document.querySelector('#pin').content.querySelector('.map__pin');
-  var mapPinsBlock = document.querySelector('.map__pins');
-  var fragment = document.createDocumentFragment();
+// var renderAllMapPins = function (offers) {
+//   var mapPin = document.querySelector('#pin').content.querySelector('.map__pin');
+//   var mapPinsBlock = document.querySelector('.map__pins');
+//   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < offers.length; i++) {
-    fragment.appendChild(renderOneMapPin(offers[i], mapPin));
-  }
+//   for (var i = 0; i < offers.length; i++) {
+//     fragment.appendChild(renderOneMapPin(offers[i], mapPin));
+//   }
 
-  mapPinsBlock.appendChild(fragment);
-};
+//   mapPinsBlock.appendChild(fragment);
+// };
 
 /**
  * @description Function removes fade effect from the map.
@@ -154,59 +157,66 @@ var showMap = function () {
 };
 
 /**
+ * @description Function adds fade effect to the map.
+ */
+var hideMap = function () {
+  document.querySelector('.map').classList.add('map--faded');
+};
+
+/**
  * @description Function returns Russian word for offer type;
  * @param {object} offer - An object with offer data.
  * @return {string} - a Russian word for the offer type.
  */
-var getOfferType = function (offer) {
-  switch (offer.offer.type) {
-    case 'flat': return 'Квартира';
-    case 'bungalo': return 'Бунгало';
-    case 'house': return 'Дом';
-    case 'palace': return 'Дворец';
-  }
+// var getOfferType = function (offer) {
+//   switch (offer.offer.type) {
+//     case 'flat': return 'Квартира';
+//     case 'bungalo': return 'Бунгало';
+//     case 'house': return 'Дом';
+//     case 'palace': return 'Дворец';
+//   }
 
-  return offer.offer.type;
-};
+//   return offer.offer.type;
+// };
 
 /**
  * @description Function returns a string with guests and rooms number if both pieces of information present in the offer object.
  * @param {object} offer - Offer object.
  * @return {string} Offer data with rooms and guests number.
  */
-var getRoomsAndGuests = function (offer) {
-  var roomsAndGuests = '';
-  if (offer.offer.rooms && offer.offer.guests) {
-    roomsAndGuests = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
-  }
-  return roomsAndGuests;
-};
+// var getRoomsAndGuests = function (offer) {
+//   var roomsAndGuests = '';
+//   if (offer.offer.rooms && offer.offer.guests) {
+//     roomsAndGuests = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
+//   }
+//   return roomsAndGuests;
+// };
 
 /**
  * @description Function returns a string with checkin and checkout time if both pieces of information present in the offer object.
  * @param {object} offer - Offer object.
  * @return {string} Offer data with checkin and checkout time.
  */
-var getCheckinAndCheckoutTime = function (offer) {
-  var checkinAndCheckout = '';
-  if (offer.offer.checkin && offer.offer.checkout) {
-    checkinAndCheckout = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
-  }
-  return checkinAndCheckout;
-};
+// var getCheckinAndCheckoutTime = function (offer) {
+//   var checkinAndCheckout = '';
+//   if (offer.offer.checkin && offer.offer.checkout) {
+//     checkinAndCheckout = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
+//   }
+//   return checkinAndCheckout;
+// };
 
 /**
  * @description Function hides HTML element if the offer does not contain information for that element. If offer has text content for the element, function adds that text content in the element and shows the element in HTML.
  * @param {object} element - HTML block with text content.
  * @param {string} elementText Text from the offer that should be in the element's textContent.
  */
-var hideEmptyTextElement = function (element, elementText) {
-  if (elementText) {
-    element.textContent = elementText;
-  } else {
-    element.classList.add('hidden');
-  }
-};
+// var hideEmptyTextElement = function (element, elementText) {
+//   if (elementText) {
+//     element.textContent = elementText;
+//   } else {
+//     element.classList.add('hidden');
+//   }
+// };
 
 /**
  * @description Function creates one offer card.
@@ -214,6 +224,7 @@ var hideEmptyTextElement = function (element, elementText) {
  * @param {object} cardTemplate - HTML object with a template markup.
  * @return {object} HTML object with one map card.
  */
+/*
 var renderOneMapCard = function (offer, cardTemplate) {
   var mapCardElement = cardTemplate.cloneNode(true);
   var mapCardTitle = mapCardElement.querySelector('.popup__title');
@@ -268,10 +279,13 @@ var renderOneMapCard = function (offer, cardTemplate) {
 
   return mapCardElement;
 };
+*/
 
 // Генерируем массив предложений (моки)
-var offers = generateOffers(OFFERS_NUMBER);
-// Находит шаблон карточки предложения
+// var offers = generateOffers(OFFERS_NUMBER);
+
+/*
+// Находим шаблон карточки предложения
 var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 // Создаем карточку предложения на основе первого элемента из массива предложений
 var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
@@ -279,7 +293,7 @@ var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
 var mapCardBlock = document.querySelector('.map');
 // Выводим карточку предложения перед блоком с классом .map__filters-container в блоке с картой
 mapCardBlock.insertBefore(cardElement, mapCardBlock.querySelector('.map__filters-container'));
+*/
+
 // Выводим все пины предложений на карту.
-renderAllMapPins(offers);
-// Убираем эффект затемнения с карты.
-showMap();
+// renderAllMapPins(offers);

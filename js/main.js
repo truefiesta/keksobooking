@@ -462,3 +462,43 @@ mapPinMain.addEventListener('keydown', function (evt) {
   }
 });
 
+/**
+ * @description Function returns an option, that has 'selected' attribute.
+ * @param {object} selectElement - HTML select element.
+ * @return {object} - HTML option element what is selected.
+ */
+var getSelectedOption = function (selectElement) {
+  var opt;
+  for (var i = 0; i < selectElement.options.length; i++) {
+    if (selectElement.options[i].selected) {
+      opt = selectElement.options[i];
+      break;
+    }
+  }
+
+  return opt;
+};
+
+// Функция проверяет соответствие количества комнат количеству гостей.
+var checkRoomsAndGuestsValidity = function (guestsValue, roomsValue) {
+  if (guestsValue === 0 && roomsValue === 100) {
+    adFormGuests.setCustomValidity('');
+  } else if ((guestsValue !== 0) && (roomsValue !== 100) && (guestsValue <= roomsValue)) {
+    adFormGuests.setCustomValidity('');
+  } else {
+    adFormGuests.setCustomValidity('Количество гостей не соответствует количеству комнат.');
+  }
+};
+
+// Обработчик для изменения полей количество комнам и количество гостей.
+var onRoomsOrGuestsChange = function () {
+  var guestsCurrentValue = parseInt(getSelectedOption(adFormGuests).value, 10);
+  var roomsCurrentValue = parseInt(getSelectedOption(adFormRooms).value, 10);
+  checkRoomsAndGuestsValidity(guestsCurrentValue, roomsCurrentValue);
+};
+
+adFormGuests.addEventListener('change', onRoomsOrGuestsChange);
+adFormRooms.addEventListener('change', onRoomsOrGuestsChange);
+
+// Переводим страницу в неактивное состояние.
+deactivatePage();

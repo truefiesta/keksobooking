@@ -10,6 +10,14 @@
 // var OFFERS_NUMBER = 8;
 // var PIN_WIDTH = 50;
 // var PIN_HEIGHT = 70;
+var ENTER_KEY = 'Enter';
+var METRIC_UNIT = 'px';
+// Начальные размеры метки на карте.
+var MAIN_PIN_INITIAL_WIDTH = 65;
+var MAIN_PIN_INITIAL_HEIGHT = 65;
+var MAIN_PIN_IMAGE_HEIGHT = 62;
+var MAIN_PIN_POINT_HEIGHT = 22;
+var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
 
 /**
  * @description Function always returns a random number between min and max (both included).
@@ -297,3 +305,160 @@ mapCardBlock.insertBefore(cardElement, mapCardBlock.querySelector('.map__filters
 
 // Выводим все пины предложений на карту.
 // renderAllMapPins(offers);
+
+/**
+ * @description Function checks if a fieldset has inputs or selects as child nodes.
+ * @param {object} fieldsetElement HTML element with a tag name of fieldset.
+ * @return {boolean} true - if element has input or select inside.
+ */
+var checkIfFieldsetHasInputOrSelect = function (fieldsetElement) {
+  var fieldsetHasInput = fieldsetElement.querySelector('input');
+  var fielsetHasSelect = fieldsetElement.querySelector('select');
+
+  return fieldsetHasInput || fielsetHasSelect;
+};
+
+/**
+ * @description Function sets 'disabled' attribute on the element from elements array. If element is a fieldset, it will get 'disabled' attribute only if this fieldset contains inputs or selects inside.
+ * @param {array} elements Array of HTML form elements.
+ */
+var disableFormElements = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    if (elements[i].tagName.toLowerCase() === 'fieldset' && checkIfFieldsetHasInputOrSelect(elements[i])) {
+      elements[i].setAttribute('disabled', '');
+    } else if (elements[i].tagName.toLowerCase() !== 'fieldset') {
+      elements[i].setAttribute('disabled', '');
+    }
+  }
+};
+
+/**
+ * @description Function removes attribute 'disabled' of every element from array of elements.
+ * @param {array} elements - HTML elements
+ */
+var enableFormElements = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].removeAttribute('disabled');
+  }
+};
+
+// Переменные для работы с DOM элементами формы .ad-form.
+var adForm = document.querySelector('.ad-form');
+var allAdFormFieldsets = adForm.querySelectorAll('fieldset');
+var allAdFormInputs = adForm.querySelectorAll('input');
+var allAdFormSelects = adForm.querySelectorAll('select');
+var adFormAddress = adForm.querySelector('input[name = address]');
+var adFormRooms = adForm.querySelector('select[name = rooms]');
+var adFormGuests = adForm.querySelector('select[name = capacity]');
+// Метка, являющаяся контролом указания адреса объявления
+var mapPinMain = document.querySelector('.map__pin--main');
+
+/**
+ * @description Function removes opacity from the form with a class of .ad-form.
+ */
+var showAdForm = function () {
+  adForm.classList.remove('ad-form--disabled');
+};
+
+/**
+ * @description Function adds opacity to the form with a class of .ad-form.
+ */
+var hideAdForm = function () {
+  adForm.classList.add('ad-form--disabled');
+};
+
+// Переводит страницу в неактивное состояние.
+var deactivatePage = function () {
+  // Добавляем эффекс затемнения на карту.
+  hideMap();
+  // Добавляем прозрачность форме .ad-form
+  hideAdForm();
+
+  // Переводим элементы формы .ad-form в неактивное состояние.
+  disableFormElements(allAdFormInputs);
+  disableFormElements(allAdFormSelects);
+  disableFormElements(allAdFormFieldsets);
+};
+
+// Переводит страницу в активное состояние.
+var activatePage = function () {
+  // Убираем эффект затемнения с карты.
+  showMap();
+  // Убираем прозрачность с формы .ad-form
+  showAdForm();
+
+  // Активируем поля формы .ad-form
+  enableFormElements(allAdFormInputs);
+  enableFormElements(allAdFormSelects);
+  enableFormElements(allAdFormFieldsets);
+};
+
+/**
+ * @description Function separates 'px' from the number.
+ * @param {string} coordinateInPx - String that was receives by reading position attribute of the element. This string represents '{number}px'.
+ * @return {number} - Returns an integer number without 'px'.
+ */
+var getCoordinatesInNumber = function (coordinateInPx) {
+  var stringArray = coordinateInPx.split(METRIC_UNIT);
+  return parseInt(stringArray[0], 10);
+};
+
+// Получаем начальные значения атрибутов top и left левого верхнего угла главного указателя.
+var xLeftCorner = getCoordinatesInNumber(mapPinMain.style.left);
+var yLeftCorner = getCoordinatesInNumber(mapPinMain.style.top);
+
+/**
+ * @description Function returns x and y coordinatas of main pin center. When the page is inactive and main pin does not have a pointer.
+ * @return {object} - Location object with x and y coordinates of main pin center.
+ */
+var getInitialAddressCoordinates = function () {
+  var xCenter = Math.round(xLeftCorner + MAIN_PIN_INITIAL_WIDTH / 2);
+  var yCenter = Math.round(yLeftCorner + MAIN_PIN_INITIAL_HEIGHT / 2);
+
+  return {x: xCenter, y: yCenter};
+};
+
+/**
+ * @description Function returns x and y coordinates of the main pin pointer.
+ * @param {number} xPinLeftCorner - x coordinate of top left corner of the main pin
+ * @param {number} yPinLeftCorner - y coordinate of top left corner of the main pin
+ * @return {object} - x and y coordinates of main pin pointer.
+ */
+var getAddressCoordinates = function (xPinLeftCorner, yPinLeftCorner) {
+  var xPointer = Math.round(xPinLeftCorner + MAIN_PIN_INITIAL_WIDTH / 2);
+  var yPointer = Math.round(yPinLeftCorner + MAIN_PIN_WITH_POINT_HEIGHT);
+
+  return {x: xPointer, y: yPointer};
+};
+
+/**
+ * @description Function sets address in the ad-form address field as a string {x, y}.
+ * @param {object} location - Object with x and y coordinates.
+ */
+var setAddress = function (location) {
+  adFormAddress.value = location.x + ', ' + location.y;
+};
+
+// Получаем начальные координаты главной метки, когда у него нет острого указателя.
+var inactivePageInilialLocation = getInitialAddressCoordinates();
+
+// Устанавливаем изначальные точки координат в поле адрес. Это точка центра главной метки карты до активации карты. То есть главная метка карты в этот момент является кругом без острого указателя.
+setAddress(inactivePageInilialLocation);
+
+// Получаем начальные координаты главной метки при активации страницы. То есть у метки уже есть указатель.
+var activePageInitialLocation = getAddressCoordinates(xLeftCorner, yLeftCorner);
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  if (evt.button === 0) {
+    activatePage();
+    setAddress(activePageInitialLocation);
+  }
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    activatePage();
+    setAddress(activePageInitialLocation);
+  }
+});
+

@@ -18,6 +18,9 @@ var MAIN_PIN_INITIAL_HEIGHT = 65;
 var MAIN_PIN_IMAGE_HEIGHT = 62;
 var MAIN_PIN_POINT_HEIGHT = 22;
 var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
+// Режимы страницы
+var MODE_ACTIVE = 'active';
+var MODE_INACTIVE = 'inactive';
 
 /**
  * @description Function always returns a random number between min and max (both included).
@@ -323,25 +326,19 @@ var activatePage = function (mapElement, formElement, formFielsets) {
 };
 
 /**
- * @description Function returns x and y coordinates of the pin center.
- * @param {object} pin - HTML elemenent - main pin of a map.
- * @return {object} - x and y coordinates of main pin pointer.
+ * @description Function returns x and y coordinates of the main pin.
+ * @param {stiring} mode - Page mode - 'active' or 'inactive'.
+ * @param {object} pin - HTML element - main pin of a map.
+ * @return {object} - x and y coordinates of main pin.
  */
-var getMainPinCenterCoordinates = function (pin) {
+var getMainPinCoordinates = function (mode, pin) {
   var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
-  var y = Math.round(pin.offsetTop + MAIN_PIN_INITIAL_HEIGHT / 2);
-
-  return {x: x, y: y};
-};
-
-/**
- * @description Function returns x and y coordinates of the main pin pointer.
- * @param {object} pin - HTML elemenent - main pin of a map.
- * @return {object} - x and y coordinates of main pin pointer.
- */
-var getMainPinPointerCoordinates = function (pin) {
-  var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
-  var y = Math.round(pin.offsetTop + MAIN_PIN_WITH_POINT_HEIGHT);
+  var y = 0;
+  if (mode === MODE_INACTIVE) {
+    y = Math.round(pin.offsetTop + MAIN_PIN_INITIAL_HEIGHT / 2);
+  } else {
+    y = Math.round(pin.offsetTop + MAIN_PIN_WITH_POINT_HEIGHT);
+  }
 
   return {x: x, y: y};
 };
@@ -375,7 +372,7 @@ var getSelectedOption = function (selectElement) {
 // Находим главную метку.
 var mapPinMain = document.querySelector('.map__pin--main');
 // Получаем начальные координаты главной метки, когда у него нет острого указателя.
-var initialMainPinCoordinates = getMainPinCenterCoordinates(mapPinMain);
+var initialMainPinCoordinates = getMainPinCoordinates(MODE_INACTIVE, mapPinMain);
 // Находим форму ad-form.
 var adForm = document.querySelector('.ad-form');
 // Находим поле адреса в форме ad-form.
@@ -397,7 +394,7 @@ map.insertBefore(cardElement, map.querySelector('.map__filters-container'));
 // Находим fieldsets формы .ad-form.
 var adFormFieldsets = adForm.querySelectorAll('fieldset');
 // Получаем начальные координаты главной метки при активации страницы. То есть у метки уже есть указатель.
-var afterActivationMainPinCoordinates = getMainPinPointerCoordinates(mapPinMain);
+var afterActivationMainPinCoordinates = getMainPinCoordinates(MODE_ACTIVE, mapPinMain);
 
 mapPinMain.addEventListener('mousedown', function (evt) {
   if (evt.button === 0) {

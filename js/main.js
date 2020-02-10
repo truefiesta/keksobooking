@@ -8,8 +8,16 @@ var OFFER_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'co
 var OFFER_DESCRIPTIONS = ['A comfortable space that can accommodate up to 2 people. This apartment is 3mins from Shinjuku by train and also close to Shibuya ! It is a 6-minute walk from the nearest station of the apartment.The apartment is in a residential area so you can sleep peacefully and sleep at night.', 'We have permission for business as hotel, Japan visitors can legally stay* >3 metro stations nearby take you directly to the best Tokyo spots >Bus to Tokyo airports (Tokyo City Air Terminal) is a short walk distance >Neighborhood has traditional shops, pubs, restaurants for true local experience >Grocery&drug stores, ¥100 shops nearby to fill your shopping needs >Ideal for short stay, but we have had many satisfied long-term guests >Checkin until 12am, convenient in case of arrival by late flight', 'Tateishi Tokyo,Quaint Neighborhood around the Station. Many Bars still exist since right after the World War near the station. You can feel what Tokyo was like back in 1940s. Good access to Major spot (15mins-50mins )'];
 var OFFER_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var OFFERS_NUMBER = 8;
+
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+var ENTER_KEY = 'Enter';
+// Начальные размеры метки на карте.
+var MAIN_PIN_INITIAL_WIDTH = 65;
+var MAIN_PIN_INITIAL_HEIGHT = 65;
+var MAIN_PIN_IMAGE_HEIGHT = 62;
+var MAIN_PIN_POINT_HEIGHT = 22;
+var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
 
 /**
  * @description Function always returns a random number between min and max (both included).
@@ -147,13 +155,6 @@ var renderAllMapPins = function (offers) {
 };
 
 /**
- * @description Function removes fade effect from the map.
- */
-var showMap = function () {
-  document.querySelector('.map').classList.remove('map--faded');
-};
-
-/**
  * @description Function returns Russian word for offer type;
  * @param {object} offer - An object with offer data.
  * @return {string} - a Russian word for the offer type.
@@ -174,7 +175,7 @@ var getOfferType = function (offer) {
  * @param {object} offer - Offer object.
  * @return {string} Offer data with rooms and guests number.
  */
-var getRoomsAndGuests = function (offer) {
+var getRoomsAndGuestsString = function (offer) {
   var roomsAndGuests = '';
   if (offer.offer.rooms && offer.offer.guests) {
     roomsAndGuests = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
@@ -228,7 +229,7 @@ var renderOneMapCard = function (offer, cardTemplate) {
   hideEmptyTextElement(mapCardAddress, offer.offer.address);
   hideEmptyTextElement(mapCardPrice, offer.offer.price);
   hideEmptyTextElement(mapCardType, getOfferType(offer));
-  hideEmptyTextElement(mapCardCapacity, getRoomsAndGuests(offer));
+  hideEmptyTextElement(mapCardCapacity, getRoomsAndGuestsString(offer));
   hideEmptyTextElement(mapCardTime, getCheckinAndCheckoutTime(offer));
 
   if (offer.offer.features.length > 0) {
@@ -269,17 +270,175 @@ var renderOneMapCard = function (offer, cardTemplate) {
   return mapCardElement;
 };
 
+/**
+ * @description Function sets 'disabled' attribute on the element from elements array. If element is a fieldset, it will get 'disabled' attribute.
+ * @param {array} elements Array of HTML form elements.
+ */
+var disableFormElements = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].setAttribute('disabled', '');
+  }
+};
+
+/**
+ * @description Function removes attribute 'disabled' of every element from array of elements.
+ * @param {array} elements - HTML elements
+ */
+var enableFormElements = function (elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].removeAttribute('disabled');
+  }
+};
+
+/**
+ * @description Function adds class to hide the element.
+ * @param {object} element HTML element.
+ * @param {string} className Name of class, that hides the element.
+ */
+var hide = function (element, className) {
+  element.classList.add(className);
+};
+
+/**
+ * @description Function removes a class, that hides the element.
+ * @param {object} element HTML element.
+ * @param {string} className Name of class, should be removed to show the element.
+ */
+var show = function (element, className) {
+  element.classList.remove(className);
+};
+
+// Переводит страницу в неактивное состояние.
+var deactivatePage = function (mapElement, formElement, formFielsets) {
+  hide(mapElement, 'map--faded');
+  hide(formElement, 'ad-form--disabled');
+  disableFormElements(formFielsets);
+};
+
+// Переводит страницу в активное состояние.
+var activatePage = function (mapElement, formElement, formFielsets) {
+  show(mapElement, 'map--faded');
+  show(formElement, 'ad-form--disabled');
+  enableFormElements(formFielsets);
+};
+
+/**
+ * @description Function returns x and y coordinates of the pin center.
+ * @param {object} pin - HTML elemenent - main pin of a map.
+ * @return {object} - x and y coordinates of main pin pointer.
+ */
+var getMainPinCenterCoordinates = function (pin) {
+  var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
+  var y = Math.round(pin.offsetTop + MAIN_PIN_INITIAL_HEIGHT / 2);
+
+  return {x: x, y: y};
+};
+
+/**
+ * @description Function returns x and y coordinates of the main pin pointer.
+ * @param {object} pin - HTML elemenent - main pin of a map.
+ * @return {object} - x and y coordinates of main pin pointer.
+ */
+var getMainPinPointerCoordinates = function (pin) {
+  var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
+  var y = Math.round(pin.offsetTop + MAIN_PIN_WITH_POINT_HEIGHT);
+
+  return {x: x, y: y};
+};
+
+/**
+ * @description Function sets address in the ad-form address field as a string {x, y}.
+ * @param {object} location - Object with x and y coordinates.
+ * @param {object} addressField - Input field with address value.
+ */
+var setAddress = function (location, addressField) {
+  addressField.value = location.x + ', ' + location.y;
+};
+
+/**
+ * @description Function returns an option, that has 'selected' attribute.
+ * @param {object} selectElement - HTML select element.
+ * @return {object} - HTML option element what is selected.
+ */
+var getSelectedOption = function (selectElement) {
+  var opt;
+  for (var i = 0; i < selectElement.options.length; i++) {
+    if (selectElement.options[i].selected) {
+      opt = selectElement.options[i];
+      break;
+    }
+  }
+
+  return opt;
+};
+
+// Находим главную метку.
+var mapPinMain = document.querySelector('.map__pin--main');
+// Получаем начальные координаты главной метки, когда у него нет острого указателя.
+var initialMainPinCoordinates = getMainPinCenterCoordinates(mapPinMain);
+// Находим форму ad-form.
+var adForm = document.querySelector('.ad-form');
+// Находим поле адреса в форме ad-form.
+var adFormAddress = adForm.querySelector('input[name = address]');
+// Устанавливаем изначальные точки координат в поле адрес. Это точка центра главной метки карты до активации карты. То есть главная метка карты в этот момент является кругом без острого указателя.
+setAddress(initialMainPinCoordinates, adFormAddress);
+
+// Находим шаблон карточки предложения
+var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 // Генерируем массив предложений (моки)
 var offers = generateOffers(OFFERS_NUMBER);
-// Находит шаблон карточки предложения
-var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 // Создаем карточку предложения на основе первого элемента из массива предложений
 var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
 // Находим блок с картой.
-var mapCardBlock = document.querySelector('.map');
+var map = document.querySelector('.map');
 // Выводим карточку предложения перед блоком с классом .map__filters-container в блоке с картой
-mapCardBlock.insertBefore(cardElement, mapCardBlock.querySelector('.map__filters-container'));
-// Выводим все пины предложений на карту.
-renderAllMapPins(offers);
-// Убираем эффект затемнения с карты.
-showMap();
+map.insertBefore(cardElement, map.querySelector('.map__filters-container'));
+
+// Находим fieldsets формы .ad-form.
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+// Получаем начальные координаты главной метки при активации страницы. То есть у метки уже есть указатель.
+var afterActivationMainPinCoordinates = getMainPinPointerCoordinates(mapPinMain);
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  if (evt.button === 0) {
+    activatePage(map, adForm, adFormFieldsets);
+    renderAllMapPins(offers);
+    setAddress(afterActivationMainPinCoordinates, adFormAddress);
+  }
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    activatePage(map, adForm, adFormFieldsets);
+    renderAllMapPins(offers);
+    setAddress(afterActivationMainPinCoordinates, adFormAddress);
+  }
+});
+
+// Находим поле для ввода количества комнат в форме ad-form.
+var adFormRooms = adForm.querySelector('select[name = rooms]');
+// Находим поле для ввода количества гостей в форме ad-form.
+var adFormGuests = adForm.querySelector('select[name = capacity]');
+// Функция проверяет соответствие количества комнат количеству гостей.
+var checkRoomsAndGuestsValidity = function (guestsValue, roomsValue) {
+  if (guestsValue === 0 && roomsValue === 100) {
+    adFormGuests.setCustomValidity('');
+  } else if ((guestsValue !== 0) && (roomsValue !== 100) && (guestsValue <= roomsValue)) {
+    adFormGuests.setCustomValidity('');
+  } else {
+    adFormGuests.setCustomValidity('Количество гостей не соответствует количеству комнат.');
+  }
+};
+
+// Обработчик для изменения полей количества комнат и количества гостей.
+var onRoomsOrGuestsChange = function () {
+  var guestsCurrentValue = parseInt(getSelectedOption(adFormGuests).value, 10);
+  var roomsCurrentValue = parseInt(getSelectedOption(adFormRooms).value, 10);
+  checkRoomsAndGuestsValidity(guestsCurrentValue, roomsCurrentValue);
+};
+
+adFormGuests.addEventListener('change', onRoomsOrGuestsChange);
+adFormRooms.addEventListener('change', onRoomsOrGuestsChange);
+
+// Переводим страницу в неактивное состояние.
+deactivatePage(map, adForm, adFormFieldsets);

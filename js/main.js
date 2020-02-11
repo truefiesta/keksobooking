@@ -397,7 +397,7 @@ var setAddress = function (location, addressField) {
 /**
  * @description Function returns an option, that has 'selected' attribute.
  * @param {object} selectElement - HTML select element.
- * @return {object} - HTML option element what is selected.
+ * @return {object} - HTML option element that is selected.
  */
 var getSelectedOption = function (selectElement) {
   var opt;
@@ -422,12 +422,10 @@ var adFormAddress = adForm.querySelector('input[name = address]');
 // Устанавливаем изначальные точки координат в поле адрес. Это точка центра главной метки карты до активации карты. То есть главная метка карты в этот момент является кругом без острого указателя.
 setAddress(initialMainPinCoordinates, adFormAddress);
 
-
 // Генерируем массив предложений (моки)
 var offers = generateOffers(OFFERS_NUMBER);
 // Находим блок с картой.
 var map = document.querySelector('.map');
-
 
 // Находим fieldsets формы .ad-form.
 var adFormFieldsets = adForm.querySelectorAll('fieldset');

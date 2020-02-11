@@ -191,7 +191,9 @@ var renderAllMapPins = function (offers) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < offers.length; i++) {
-    fragment.appendChild(renderOneMapPin(offers[i], mapPin));
+    var pin = renderOneMapPin(offers[i], mapPin);
+    addClickListener(pin, offers[i]);
+    fragment.appendChild(pin);
   }
 
   mapPinsBlock.appendChild(fragment);

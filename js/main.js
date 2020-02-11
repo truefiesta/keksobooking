@@ -499,5 +499,31 @@ var onOfferTypeChange = function () {
 
 adFormTypes.addEventListener('change', onOfferTypeChange);
 
+// Находим поля для выбора времени въезда и выезда.
+var adCheckinTimes = adForm.querySelector('select[name = timein]');
+var adCheckoutTimes = adForm.querySelector('select[name = timeout]');
+
+var onTimeChange = function (element) {
+  var checkinTime = getSelectedOption(adCheckinTimes).value;
+  var checkoutTime = getSelectedOption(adCheckoutTimes).value;
+  if (checkinTime !== checkoutTime) {
+    if (element === adCheckinTimes) {
+      adCheckoutTimes.value = checkinTime;
+    } else {
+      adCheckinTimes.value = checkoutTime;
+    }
+  }
+};
+
+adCheckinTimes.addEventListener('change', function (evt) {
+  var target = evt.target;
+  onTimeChange(target);
+});
+
+adCheckoutTimes.addEventListener('change', function (evt) {
+  var target = evt.target;
+  onTimeChange(target);
+});
+
 // Переводим страницу в неактивное состояние.
 deactivatePage(map, adForm, adFormFieldsets);

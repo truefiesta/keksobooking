@@ -435,7 +435,7 @@ var adFormFieldsets = adForm.querySelectorAll('fieldset');
 var afterActivationMainPinCoordinates = getMainPinCoordinates(MODE_ACTIVE, mapPinMain);
 
 mapPinMain.addEventListener('mousedown', function (evt) {
-  if (evt.button === 0) {
+  if (evt.button === 0 && (map.classList.contains('map--faded'))) {
     activatePage(map, adForm, adFormFieldsets);
     renderAllMapPins(offers);
     setAddress(afterActivationMainPinCoordinates, adFormAddress);

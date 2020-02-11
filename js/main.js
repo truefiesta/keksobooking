@@ -464,6 +464,7 @@ var checkRoomsAndGuestsValidity = function (guestsValue, roomsValue) {
 };
 
 // Обработчик для изменения полей количества комнат и количества гостей.
+// parseInt используется для приведения к числовому типу.
 var onRoomsOrGuestsChange = function () {
   var guestsCurrentValue = parseInt(getSelectedOption(adFormGuests).value, 10);
   var roomsCurrentValue = parseInt(getSelectedOption(adFormRooms).value, 10);
@@ -472,6 +473,31 @@ var onRoomsOrGuestsChange = function () {
 
 adFormGuests.addEventListener('change', onRoomsOrGuestsChange);
 adFormRooms.addEventListener('change', onRoomsOrGuestsChange);
+
+// Находим поле для выбора типа жилья.
+var adFormTypes = adForm.querySelector('select[name = type]');
+// Находим поле для ввода цены за ночь.
+var adFormPrice = adForm.querySelector('input[name = price]');
+
+// Поле «Тип жилья» влияет на минимальное значение поля «Цена за ночь»
+var getMinPriceForOfferType = function () {
+  var typeValue = getSelectedOption(adFormTypes).value;
+  var minPrice = 0;
+  switch (typeValue) {
+    case 'flat': return 1000;
+    case 'bungalo': return 0;
+    case 'house': return 5000;
+    case 'palace': return 10000;
+  }
+  return minPrice;
+};
+
+var onOfferTypeChange = function () {
+  adFormPrice.min = getMinPriceForOfferType();
+  adFormPrice['placeholder'] = adFormPrice.min;
+};
+
+adFormTypes.addEventListener('change', onOfferTypeChange);
 
 // Переводим страницу в неактивное состояние.
 deactivatePage(map, adForm, adFormFieldsets);

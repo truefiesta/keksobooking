@@ -12,6 +12,7 @@ var OFFERS_NUMBER = 8;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 // Начальные размеры метки на карте.
 var MAIN_PIN_INITIAL_WIDTH = 65;
 var MAIN_PIN_INITIAL_HEIGHT = 65;
@@ -139,6 +140,45 @@ var renderOneMapPin = function (offer, mapPin) {
   mapPinElement.querySelector('img').alt = offer.offer.title;
 
   return mapPinElement;
+};
+
+var addClickListener = function (pin, offer) {
+  // Находим шаблон карточки предложения
+  var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
+  // Создаем карточку предложения на основе элемента из массива предложений
+  var cardElement = renderOneMapCard(offer, mapCardTemplate);
+  // Находим кнопку закрытия на карточке.
+  var cardCloseButton = cardElement.querySelector('.popup__close');
+
+  var pinClick = function () {
+    var openedCard = document.querySelector('.map__card');
+    if (openedCard) {
+      openedCard.querySelector('.popup__close').click();
+    }
+    // Выводим карточку предложения перед блоком с классом .map__filters-container.
+    map.insertBefore(cardElement, map.querySelector('.map__filters-container'));
+    // Добавляем обработчик клика кнопке закрытия карточки предложения.
+    cardCloseButton.addEventListener('click', closeCard);
+    // Добавить класс к пину, по которому кликнули.
+    pin.classList.add('map__pin--active');
+    document.addEventListener('keydown', onCardEscPress);
+    pin.removeEventListener('click', pinClick);
+  };
+
+  var onCardEscPress = function (evt) {
+    if (evt.key === ESC_KEY) {
+      closeCard();
+    }
+  };
+
+  var closeCard = function () {
+    cardElement.remove();
+    pin.addEventListener('click', pinClick);
+    pin.classList.remove('map__pin--active');
+    document.removeEventListener('keydown', onCardEscPress);
+  };
+
+  pin.addEventListener('click', pinClick);
 };
 
 /**
@@ -380,16 +420,12 @@ var adFormAddress = adForm.querySelector('input[name = address]');
 // Устанавливаем изначальные точки координат в поле адрес. Это точка центра главной метки карты до активации карты. То есть главная метка карты в этот момент является кругом без острого указателя.
 setAddress(initialMainPinCoordinates, adFormAddress);
 
-// Находим шаблон карточки предложения
-var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
+
 // Генерируем массив предложений (моки)
 var offers = generateOffers(OFFERS_NUMBER);
-// Создаем карточку предложения на основе первого элемента из массива предложений
-var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
 // Находим блок с картой.
 var map = document.querySelector('.map');
-// Выводим карточку предложения перед блоком с классом .map__filters-container в блоке с картой
-map.insertBefore(cardElement, map.querySelector('.map__filters-container'));
+
 
 // Находим fieldsets формы .ad-form.
 var adFormFieldsets = adForm.querySelectorAll('fieldset');

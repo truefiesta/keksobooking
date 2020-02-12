@@ -12,12 +12,16 @@ var OFFERS_NUMBER = 8;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 // Начальные размеры метки на карте.
 var MAIN_PIN_INITIAL_WIDTH = 65;
 var MAIN_PIN_INITIAL_HEIGHT = 65;
 var MAIN_PIN_IMAGE_HEIGHT = 62;
 var MAIN_PIN_POINT_HEIGHT = 22;
 var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
+// Режимы страницы
+var MODE_ACTIVE = 'active';
+var MODE_INACTIVE = 'inactive';
 
 /**
  * @description Function always returns a random number between min and max (both included).
@@ -138,6 +142,45 @@ var renderOneMapPin = function (offer, mapPin) {
   return mapPinElement;
 };
 
+var addClickListener = function (pin, offer) {
+  // Находим шаблон карточки предложения
+  var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
+  // Создаем карточку предложения на основе элемента из массива предложений
+  var cardElement = renderOneMapCard(offer, mapCardTemplate);
+  // Находим кнопку закрытия на карточке.
+  var cardCloseButton = cardElement.querySelector('.popup__close');
+
+  var pinClick = function () {
+    var openedCard = document.querySelector('.map__card');
+    if (openedCard) {
+      openedCard.querySelector('.popup__close').click();
+    }
+    // Выводим карточку предложения перед блоком с классом .map__filters-container.
+    map.insertBefore(cardElement, map.querySelector('.map__filters-container'));
+    // Добавляем обработчик клика кнопке закрытия карточки предложения.
+    cardCloseButton.addEventListener('click', closeCard);
+    // Добавить класс к пину, по которому кликнули.
+    pin.classList.add('map__pin--active');
+    document.addEventListener('keydown', onCardEscPress);
+    pin.removeEventListener('click', pinClick);
+  };
+
+  var onCardEscPress = function (evt) {
+    if (evt.key === ESC_KEY) {
+      closeCard();
+    }
+  };
+
+  var closeCard = function () {
+    cardElement.remove();
+    pin.addEventListener('click', pinClick);
+    pin.classList.remove('map__pin--active');
+    document.removeEventListener('keydown', onCardEscPress);
+  };
+
+  pin.addEventListener('click', pinClick);
+};
+
 /**
  * @description Function renders all map pins in the HTML block with a class 'map__pins'.
  * @param {array} offers - An array of offer objects;
@@ -148,7 +191,9 @@ var renderAllMapPins = function (offers) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < offers.length; i++) {
-    fragment.appendChild(renderOneMapPin(offers[i], mapPin));
+    var pin = renderOneMapPin(offers[i], mapPin);
+    addClickListener(pin, offers[i]);
+    fragment.appendChild(pin);
   }
 
   mapPinsBlock.appendChild(fragment);
@@ -323,25 +368,19 @@ var activatePage = function (mapElement, formElement, formFielsets) {
 };
 
 /**
- * @description Function returns x and y coordinates of the pin center.
- * @param {object} pin - HTML elemenent - main pin of a map.
- * @return {object} - x and y coordinates of main pin pointer.
+ * @description Function returns x and y coordinates of the main pin.
+ * @param {stiring} mode - Page mode - 'active' or 'inactive'.
+ * @param {object} pin - HTML element - main pin of a map.
+ * @return {object} - x and y coordinates of main pin.
  */
-var getMainPinCenterCoordinates = function (pin) {
+var getMainPinCoordinates = function (mode, pin) {
   var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
-  var y = Math.round(pin.offsetTop + MAIN_PIN_INITIAL_HEIGHT / 2);
-
-  return {x: x, y: y};
-};
-
-/**
- * @description Function returns x and y coordinates of the main pin pointer.
- * @param {object} pin - HTML elemenent - main pin of a map.
- * @return {object} - x and y coordinates of main pin pointer.
- */
-var getMainPinPointerCoordinates = function (pin) {
-  var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
-  var y = Math.round(pin.offsetTop + MAIN_PIN_WITH_POINT_HEIGHT);
+  var y = 0;
+  if (mode === MODE_INACTIVE) {
+    y = Math.round(pin.offsetTop + MAIN_PIN_INITIAL_HEIGHT / 2);
+  } else {
+    y = Math.round(pin.offsetTop + MAIN_PIN_WITH_POINT_HEIGHT);
+  }
 
   return {x: x, y: y};
 };
@@ -358,7 +397,7 @@ var setAddress = function (location, addressField) {
 /**
  * @description Function returns an option, that has 'selected' attribute.
  * @param {object} selectElement - HTML select element.
- * @return {object} - HTML option element what is selected.
+ * @return {object} - HTML option element that is selected.
  */
 var getSelectedOption = function (selectElement) {
   var opt;
@@ -375,7 +414,7 @@ var getSelectedOption = function (selectElement) {
 // Находим главную метку.
 var mapPinMain = document.querySelector('.map__pin--main');
 // Получаем начальные координаты главной метки, когда у него нет острого указателя.
-var initialMainPinCoordinates = getMainPinCenterCoordinates(mapPinMain);
+var initialMainPinCoordinates = getMainPinCoordinates(MODE_INACTIVE, mapPinMain);
 // Находим форму ad-form.
 var adForm = document.querySelector('.ad-form');
 // Находим поле адреса в форме ad-form.
@@ -383,24 +422,18 @@ var adFormAddress = adForm.querySelector('input[name = address]');
 // Устанавливаем изначальные точки координат в поле адрес. Это точка центра главной метки карты до активации карты. То есть главная метка карты в этот момент является кругом без острого указателя.
 setAddress(initialMainPinCoordinates, adFormAddress);
 
-// Находим шаблон карточки предложения
-var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
 // Генерируем массив предложений (моки)
 var offers = generateOffers(OFFERS_NUMBER);
-// Создаем карточку предложения на основе первого элемента из массива предложений
-var cardElement = renderOneMapCard(offers[0], mapCardTemplate);
 // Находим блок с картой.
 var map = document.querySelector('.map');
-// Выводим карточку предложения перед блоком с классом .map__filters-container в блоке с картой
-map.insertBefore(cardElement, map.querySelector('.map__filters-container'));
 
 // Находим fieldsets формы .ad-form.
 var adFormFieldsets = adForm.querySelectorAll('fieldset');
 // Получаем начальные координаты главной метки при активации страницы. То есть у метки уже есть указатель.
-var afterActivationMainPinCoordinates = getMainPinPointerCoordinates(mapPinMain);
+var afterActivationMainPinCoordinates = getMainPinCoordinates(MODE_ACTIVE, mapPinMain);
 
 mapPinMain.addEventListener('mousedown', function (evt) {
-  if (evt.button === 0) {
+  if (evt.button === 0 && (map.classList.contains('map--faded'))) {
     activatePage(map, adForm, adFormFieldsets);
     renderAllMapPins(offers);
     setAddress(afterActivationMainPinCoordinates, adFormAddress);
@@ -431,6 +464,7 @@ var checkRoomsAndGuestsValidity = function (guestsValue, roomsValue) {
 };
 
 // Обработчик для изменения полей количества комнат и количества гостей.
+// parseInt используется для приведения к числовому типу.
 var onRoomsOrGuestsChange = function () {
   var guestsCurrentValue = parseInt(getSelectedOption(adFormGuests).value, 10);
   var roomsCurrentValue = parseInt(getSelectedOption(adFormRooms).value, 10);
@@ -439,6 +473,57 @@ var onRoomsOrGuestsChange = function () {
 
 adFormGuests.addEventListener('change', onRoomsOrGuestsChange);
 adFormRooms.addEventListener('change', onRoomsOrGuestsChange);
+
+// Находим поле для выбора типа жилья.
+var adFormTypes = adForm.querySelector('select[name = type]');
+// Находим поле для ввода цены за ночь.
+var adFormPrice = adForm.querySelector('input[name = price]');
+
+// Поле «Тип жилья» влияет на минимальное значение поля «Цена за ночь»
+var getMinPriceForOfferType = function () {
+  var typeValue = getSelectedOption(adFormTypes).value;
+  var minPrice = 0;
+  switch (typeValue) {
+    case 'flat': return 1000;
+    case 'bungalo': return 0;
+    case 'house': return 5000;
+    case 'palace': return 10000;
+  }
+  return minPrice;
+};
+
+var onOfferTypeChange = function () {
+  adFormPrice.min = getMinPriceForOfferType();
+  adFormPrice['placeholder'] = adFormPrice.min;
+};
+
+adFormTypes.addEventListener('change', onOfferTypeChange);
+
+// Находим поля для выбора времени въезда и выезда.
+var adCheckinTimes = adForm.querySelector('select[name = timein]');
+var adCheckoutTimes = adForm.querySelector('select[name = timeout]');
+
+var onTimeChange = function (element) {
+  var checkinTime = getSelectedOption(adCheckinTimes).value;
+  var checkoutTime = getSelectedOption(adCheckoutTimes).value;
+  if (checkinTime !== checkoutTime) {
+    if (element === adCheckinTimes) {
+      adCheckoutTimes.value = checkinTime;
+    } else {
+      adCheckinTimes.value = checkoutTime;
+    }
+  }
+};
+
+adCheckinTimes.addEventListener('change', function (evt) {
+  var target = evt.target;
+  onTimeChange(target);
+});
+
+adCheckoutTimes.addEventListener('change', function (evt) {
+  var target = evt.target;
+  onTimeChange(target);
+});
 
 // Переводим страницу в неактивное состояние.
 deactivatePage(map, adForm, adFormFieldsets);

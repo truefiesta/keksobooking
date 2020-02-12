@@ -480,8 +480,8 @@ var adFormTypes = adForm.querySelector('select[name = type]');
 var adFormPrice = adForm.querySelector('input[name = price]');
 
 // Поле «Тип жилья» влияет на минимальное значение поля «Цена за ночь»
-var getMinPriceForOfferType = function (selectedOfferTypeValue) {
-  switch (selectedOfferTypeValue) {
+var getMinPriceForOfferType = function (selectedTypeValue) {
+  switch (selectedTypeValue) {
     case 'flat': return 1000;
     case 'bungalo': return 0;
     case 'house': return 5000;
@@ -490,10 +490,10 @@ var getMinPriceForOfferType = function (selectedOfferTypeValue) {
   return 0;
 };
 
-// Определяем выбранный тип предложения.
-var adFormSelectedTypeValue = getSelectedOption(adFormTypes).value;
-var onOfferTypeChange = function () {
-  adFormPrice.min = getMinPriceForOfferType(adFormSelectedTypeValue);
+// Определяем выбранное значение в поле с типом предложения.
+var onOfferTypeChange = function (evt) {
+  var adFormSelectedType = getSelectedOption(evt.target);
+  adFormPrice.min = getMinPriceForOfferType(adFormSelectedType.value);
   adFormPrice['placeholder'] = adFormPrice.min;
 };
 

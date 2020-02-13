@@ -18,17 +18,20 @@
     return 'img/avatars/user0' + (index + 1) + '.png';
   };
 
+  var getRandomInteger = window.utils.getRandomInteger;
   /**
    * @description Function returns an object with x an y coordinates to place the pin on map.
    * @return {object} Object represents location with coordinates of an offer.
    */
   var generateLocation = function () {
     return {
-      'x': window.utils.getRandomInteger(130, 630),
-      'y': window.utils.getRandomInteger(130, 630)
+      'x': getRandomInteger(130, 630),
+      'y': getRandomInteger(130, 630)
     };
   };
 
+  var getRandomElemenFromArray = window.utils.getRandomElemenFromArray;
+  var generateArrayOfStrings = window.utils.generateArrayOfStrings;
   /**
    * @description Function generates an offer.
    * @param {number} index of an offer.
@@ -42,17 +45,17 @@
         'avatar': generateAvatarUrl(index)
       },
       'offer': {
-        'title': window.utils.getRandomElemenFromArray(OFFER_TITLES),
+        'title': getRandomElemenFromArray(OFFER_TITLES),
         'address': location.x + ', ' + location.y,
-        'price': window.utils.getRandomInteger(0, 1000000),
-        'type': window.utils.getRandomElemenFromArray(OFFER_TYPES),
-        'rooms': window.utils.getRandomInteger(0, 100),
-        'guests': window.utils.getRandomInteger(0, 3),
-        'checkin': window.utils.getRandomElemenFromArray(OFFER_CHECKINS),
-        'checkout': window.utils.getRandomElemenFromArray(OFFER_CHECKOUTS),
-        'features': window.utils.generateArrayOfStrings(OFFER_FEATURES),
-        'description': window.utils.getRandomElemenFromArray(OFFER_DESCRIPTIONS),
-        'photos': window.utils.generateArrayOfStrings(OFFER_PHOTOS)
+        'price': getRandomInteger(0, 1000000),
+        'type': getRandomElemenFromArray(OFFER_TYPES),
+        'rooms': getRandomInteger(0, 100),
+        'guests': getRandomInteger(0, 3),
+        'checkin': getRandomElemenFromArray(OFFER_CHECKINS),
+        'checkout': getRandomElemenFromArray(OFFER_CHECKOUTS),
+        'features': generateArrayOfStrings(OFFER_FEATURES),
+        'description': getRandomElemenFromArray(OFFER_DESCRIPTIONS),
+        'photos': generateArrayOfStrings(OFFER_PHOTOS)
       },
 
       'location': {

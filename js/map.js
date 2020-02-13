@@ -8,6 +8,8 @@
   var MAIN_PIN_POINT_HEIGHT = 22;
   var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
   var OFFERS_NUMBER = 8;
+  var MODE_INACTIVE = window.utils.MODE_INACTIVE;
+  var MODE_ACTIVE = window.utils.MODE_ACTIVE;
 
   /**
    * @description Function returns x and y coordinates of the main pin.
@@ -18,7 +20,7 @@
   var getMainPinCoordinates = function (mode, pin) {
     var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
     var y = 0;
-    if (mode === window.utils.MODE_INACTIVE) {
+    if (mode === MODE_INACTIVE) {
       y = Math.round(pin.offsetTop + MAIN_PIN_INITIAL_HEIGHT / 2);
     } else {
       y = Math.round(pin.offsetTop + MAIN_PIN_WITH_POINT_HEIGHT);
@@ -27,6 +29,8 @@
     return {x: x, y: y};
   };
 
+  var createPin = window.pin.create;
+  var addPinClickListener = window.pin.addClickListener;
   /**
    * @description Function renders all map pins in the HTML block with a class 'map__pins'.
    * @param {array} offers - An array of offer objects;
@@ -37,26 +41,30 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < offers.length; i++) {
-      var pin = window.pin.create(offers[i], mapPin);
-      window.pin.addClickListener(pin, offers[i], map);
+      var pin = createPin(offers[i], mapPin);
+      addPinClickListener(pin, offers[i], map);
       fragment.appendChild(pin);
     }
 
     mapPinsBlock.appendChild(fragment);
   };
 
+  var hideElement = window.utils.hideElement;
+  var disableForm = window.form.disable;
   // Переводит страницу в неактивное состояние.
   var deactivatePage = function (mapElement, formElement, formFielsets) {
-    window.utils.hideElement(mapElement, 'map--faded');
-    window.utils.hideElement(formElement, 'ad-form--disabled');
-    window.form.disable(formFielsets);
+    hideElement(mapElement, 'map--faded');
+    hideElement(formElement, 'ad-form--disabled');
+    disableForm(formFielsets);
   };
 
+  var showElement = window.utils.showElement;
+  var enableForm = window.form.enable;
   // Переводит страницу в активное состояние.
   var activatePage = function (mapElement, formElement, formFielsets) {
-    window.utils.showElement(mapElement, 'map--faded');
-    window.utils.showElement(formElement, 'ad-form--disabled');
-    window.form.enable(formFielsets);
+    showElement(mapElement, 'map--faded');
+    showElement(formElement, 'ad-form--disabled');
+    enableForm(formFielsets);
   };
 
   // Находим блок с картой.
@@ -65,18 +73,19 @@
   var mapPinMain = map.querySelector('.map__pin--main');
 
   // Получаем начальные координаты главной метки, когда у него нет острого указателя.
-  var initialMainPinCoordinates = getMainPinCoordinates(window.utils.MODE_INACTIVE, mapPinMain);
+  var initialMainPinCoordinates = getMainPinCoordinates(MODE_INACTIVE, mapPinMain);
 
   // Находим форму ad-form.
   var adForm = document.querySelector('.ad-form');
   // Находим поле адреса в форме ad-form.
   var adFormAddress = adForm.querySelector('input[name = address]');
 
-  // Устанавливаем изначальные точки координат в поле адрес. Это точка центра главной метки карты до активации карты. То есть главная метка карты в этот момент является кругом без острого указателя.
-  window.form.setAddress(initialMainPinCoordinates, adFormAddress);
+  var setOfferAddress = window.form.setAddress;
+  // Устанавливаем изначальные точки координат в поле адрес (до активации страницы).
+  setOfferAddress(initialMainPinCoordinates, adFormAddress);
 
-  // Получаем начальные координаты главной метки при активации страницы. То есть у метки уже есть указатель.
-  var afterActivationMainPinCoordinates = getMainPinCoordinates(window.utils.MODE_ACTIVE, mapPinMain);
+  // Получаем начальные координаты главной метки при активации страницы.
+  var afterActivationMainPinCoordinates = getMainPinCoordinates(MODE_ACTIVE, mapPinMain);
   // Находим fieldsets формы .ad-form.
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
@@ -86,16 +95,16 @@
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === 0 && (map.classList.contains('map--faded'))) {
       activatePage(map, adForm, adFormFieldsets);
-      renderAllMapPins(window.data.offers);
-      window.form.setAddress(afterActivationMainPinCoordinates, adFormAddress);
+      renderAllMapPins(offers);
+      setOfferAddress(afterActivationMainPinCoordinates, adFormAddress);
     }
   });
 
   mapPinMain.addEventListener('keydown', function (evt) {
     if (evt.key === window.utils.ENTER_KEY) {
       activatePage(map, adForm, adFormFieldsets);
-      renderAllMapPins(window.data.offers);
-      window.form.setAddress(afterActivationMainPinCoordinates, adFormAddress);
+      renderAllMapPins(offers);
+      setOfferAddress(afterActivationMainPinCoordinates, adFormAddress);
     }
   });
 

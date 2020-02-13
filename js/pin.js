@@ -3,6 +3,7 @@
 (function () {
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
+  var ESC_KEY = window.utils.ESC_KEY;
 
   /**
    * @description Function renders one pin on the map.
@@ -21,6 +22,7 @@
     return mapPinElement;
   };
 
+  var createCard = window.card.create;
   /**
    * @description Function handles click on a map pin.
    * @param {object} pin - HTML element - map pin, that was clicked.
@@ -31,7 +33,7 @@
     // Находим шаблон карточки предложения
     var mapCardTemplate = document.querySelector('#card').content.querySelector('.popup');
     // Создаем карточку предложения на основе элемента из массива предложений
-    var cardElement = window.card.create(offer, mapCardTemplate);
+    var cardElement = createCard(offer, mapCardTemplate);
     // Находим кнопку закрытия на карточке.
     var cardCloseButton = cardElement.querySelector('.popup__close');
 
@@ -51,7 +53,7 @@
     };
 
     var onCardEscPress = function (evt) {
-      if (evt.key === window.utils.ESC_KEY) {
+      if (evt.key === ESC_KEY) {
         closeCard();
       }
     };

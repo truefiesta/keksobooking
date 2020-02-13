@@ -1,6 +1,11 @@
 'use strict';
 
 (function () {
+  // Импорт из других модулей.
+  var getRandomInteger = window.utils.getRandomInteger;
+  var getRandomElemenFromArray = window.utils.getRandomElemenFromArray;
+  var generateArrayOfStrings = window.utils.generateArrayOfStrings;
+  // Константы
   var OFFER_TITLES = ['Уютный дом с видом на сад', 'Стильная комната в лучшем районе города', 'Квартира рядом с метро', 'Сдается комната на 3 месяца', 'Квартира для семьи из трех человек', 'Комната с отдельной ванной', 'Комната с балконом и видом на парк', 'Дворец для пары без детей'];
   var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
   var OFFER_CHECKINS = ['12:00', '13:00', '14:00'];
@@ -18,7 +23,6 @@
     return 'img/avatars/user0' + (index + 1) + '.png';
   };
 
-  var getRandomInteger = window.utils.getRandomInteger;
   /**
    * @description Function returns an object with x an y coordinates to place the pin on map.
    * @return {object} Object represents location with coordinates of an offer.
@@ -30,8 +34,6 @@
     };
   };
 
-  var getRandomElemenFromArray = window.utils.getRandomElemenFromArray;
-  var generateArrayOfStrings = window.utils.generateArrayOfStrings;
   /**
    * @description Function generates an offer.
    * @param {number} index of an offer.

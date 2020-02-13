@@ -1,9 +1,12 @@
 'use strict';
 
 (function () {
+  // Импорт из других модулей.
+  var createCard = window.card.create;
+  var ESC_KEY = window.utils.ESC_KEY;
+  // Константы
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
-  var ESC_KEY = window.utils.ESC_KEY;
 
   /**
    * @description Function renders one pin on the map.
@@ -22,7 +25,6 @@
     return mapPinElement;
   };
 
-  var createCard = window.card.create;
   /**
    * @description Function handles click on a map pin.
    * @param {object} pin - HTML element - map pin, that was clicked.

@@ -1,6 +1,18 @@
 'use strict';
 
 (function () {
+  // Импорт из других модулей.
+  var generateOffers = window.data.generate;
+  var hideElement = window.utils.hideElement;
+  var disableForm = window.form.disable;
+  var showElement = window.utils.showElement;
+  var enableForm = window.form.enable;
+  var createPin = window.pin.create;
+  var setOfferAddress = window.form.setAddress;
+  var addPinClickListener = window.pin.addClickListener;
+  var MODE_INACTIVE = window.utils.MODE_INACTIVE;
+  var MODE_ACTIVE = window.utils.MODE_ACTIVE;
+  var ENTER_KEY = window.utils.ENTER_KEY;
   // Начальные размеры главной метки на карте.
   var MAIN_PIN_INITIAL_WIDTH = 65;
   var MAIN_PIN_INITIAL_HEIGHT = 65;
@@ -8,9 +20,6 @@
   var MAIN_PIN_POINT_HEIGHT = 22;
   var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
   var OFFERS_NUMBER = 8;
-  var MODE_INACTIVE = window.utils.MODE_INACTIVE;
-  var MODE_ACTIVE = window.utils.MODE_ACTIVE;
-  var ENTER_KEY = window.utils.ENTER_KEY;
 
   /**
    * @description Function returns x and y coordinates of the main pin.
@@ -30,8 +39,6 @@
     return {x: x, y: y};
   };
 
-  var createPin = window.pin.create;
-  var addPinClickListener = window.pin.addClickListener;
   /**
    * @description Function renders all map pins in the HTML block with a class 'map__pins'.
    * @param {array} offers - An array of offer objects;
@@ -50,8 +57,6 @@
     mapPinsBlock.appendChild(fragment);
   };
 
-  var hideElement = window.utils.hideElement;
-  var disableForm = window.form.disable;
   // Переводит страницу в неактивное состояние.
   var deactivatePage = function (mapElement, formElement, formFielsets) {
     hideElement(mapElement, 'map--faded');
@@ -59,8 +64,6 @@
     disableForm(formFielsets);
   };
 
-  var showElement = window.utils.showElement;
-  var enableForm = window.form.enable;
   // Переводит страницу в активное состояние.
   var activatePage = function (mapElement, formElement, formFielsets) {
     showElement(mapElement, 'map--faded');
@@ -81,7 +84,6 @@
   // Находим поле адреса в форме ad-form.
   var adFormAddress = adForm.querySelector('input[name = address]');
 
-  var setOfferAddress = window.form.setAddress;
   // Устанавливаем изначальные точки координат в поле адрес (до активации страницы).
   setOfferAddress(initialMainPinCoordinates, adFormAddress);
 
@@ -91,7 +93,7 @@
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
   // Генерируем массив предложений.
-  var offers = window.data.generate(OFFERS_NUMBER);
+  var offers = generateOffers(OFFERS_NUMBER);
 
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === 0 && (map.classList.contains('map--faded'))) {

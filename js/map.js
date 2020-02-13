@@ -7,6 +7,7 @@
   var MAIN_PIN_IMAGE_HEIGHT = 62;
   var MAIN_PIN_POINT_HEIGHT = 22;
   var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
+  var OFFERS_NUMBER = 8;
 
   /**
    * @description Function returns x and y coordinates of the main pin.
@@ -78,6 +79,9 @@
   var afterActivationMainPinCoordinates = getMainPinCoordinates(window.utils.MODE_ACTIVE, mapPinMain);
   // Находим fieldsets формы .ad-form.
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
+
+  // Генерируем массив предложений.
+  var offers = window.data.generate(OFFERS_NUMBER);
 
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === 0 && (map.classList.contains('map--faded'))) {

@@ -10,6 +10,7 @@
   var OFFERS_NUMBER = 8;
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   var MODE_ACTIVE = window.utils.MODE_ACTIVE;
+  var ENTER_KEY = window.utils.ENTER_KEY;
 
   /**
    * @description Function returns x and y coordinates of the main pin.
@@ -101,7 +102,7 @@
   });
 
   mapPinMain.addEventListener('keydown', function (evt) {
-    if (evt.key === window.utils.ENTER_KEY) {
+    if (evt.key === ENTER_KEY) {
       activatePage(map, adForm, adFormFieldsets);
       renderAllMapPins(offers);
       setOfferAddress(afterActivationMainPinCoordinates, adFormAddress);

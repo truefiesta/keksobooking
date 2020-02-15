@@ -19,15 +19,18 @@
   var MAIN_PIN_IMAGE_HEIGHT = 62;
   var MAIN_PIN_POINT_HEIGHT = 22;
   var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
+  var ADDRESS_VERTICAL_COORD_MIN = 130;
+  var ADDRESS_VERTICAL_COORD_MAX = 630;
+  var ADDRESS_HORIZONTAL_COORD_MIN = 0;
   var OFFERS_NUMBER = 8;
 
   /**
-   * @description Function returns x and y coordinates of the main pin.
+   * @description Function returns x and y coordinates of the main pin center or main pin point.
    * @param {stiring} mode - Page mode - 'active' or 'inactive'.
    * @param {object} pin - HTML element - main pin of a map.
-   * @return {object} - x and y coordinates of main pin.
+   * @return {object} - x and y coordinates to put into address field according to the main pin appearance.
    */
-  var getMainPinCoordinates = function (mode, pin) {
+  var getAddressCoordinates = function (mode, pin) {
     var x = Math.round(pin.offsetLeft + MAIN_PIN_INITIAL_WIDTH / 2);
     var y = 0;
     if (mode === MODE_INACTIVE) {
@@ -77,7 +80,7 @@
   var mapPinMain = map.querySelector('.map__pin--main');
 
   // Получаем начальные координаты главной метки, когда у него нет острого указателя.
-  var initialMainPinCoordinates = getMainPinCoordinates(MODE_INACTIVE, mapPinMain);
+  var initialMainPinCoordinates = getAddressCoordinates(MODE_INACTIVE, mapPinMain);
 
   // Находим форму ad-form.
   var adForm = document.querySelector('.ad-form');
@@ -88,18 +91,90 @@
   setOfferAddress(initialMainPinCoordinates, adFormAddress);
 
   // Получаем начальные координаты главной метки при активации страницы.
-  var afterActivationMainPinCoordinates = getMainPinCoordinates(MODE_ACTIVE, mapPinMain);
+  var afterActivationMainPinCoordinates = getAddressCoordinates(MODE_ACTIVE, mapPinMain);
   // Находим fieldsets формы .ad-form.
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
   // Генерируем массив предложений.
   var offers = generateOffers(OFFERS_NUMBER);
 
+  // Определяем ширину блока, в котором перемещается главная метка
+  var addressHorizontalCoordMax = map.offsetWidth;
+  // Определяем границы области, в которой может перемещаться главная метка.
+  var draggableAreaLimits = {
+    xLeft: ADDRESS_HORIZONTAL_COORD_MIN - (MAIN_PIN_INITIAL_WIDTH / 2),
+    xRight: addressHorizontalCoordMax - (MAIN_PIN_INITIAL_WIDTH / 2),
+    yTop: ADDRESS_VERTICAL_COORD_MIN - MAIN_PIN_WITH_POINT_HEIGHT,
+    yBottom: ADDRESS_VERTICAL_COORD_MAX - MAIN_PIN_WITH_POINT_HEIGHT
+  };
+
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === 0 && (map.classList.contains('map--faded'))) {
       activatePage(map, adForm, adFormFieldsets);
       renderAllMapPins(offers);
       setOfferAddress(afterActivationMainPinCoordinates, adFormAddress);
+    } else {
+      evt.preventDefault();
+
+      var startCoords = {
+        x: evt.clientX,
+        y: evt.clientY
+      };
+
+      var onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        var shift = {
+          x: startCoords.x - moveEvt.clientX,
+          y: startCoords.y - moveEvt.clientY
+        };
+
+        startCoords = {
+          x: moveEvt.clientX,
+          y: moveEvt.clientY
+        };
+
+        var newMainPinCoords = {
+          x: mapPinMain.offsetLeft - shift.x,
+          y: mapPinMain.offsetTop - shift.y
+        };
+
+        if (newMainPinCoords.x <= draggableAreaLimits.xLeft) {
+          newMainPinCoords.x = draggableAreaLimits.xLeft;
+        } else if (newMainPinCoords.x >= draggableAreaLimits.xRight) {
+          newMainPinCoords.x = draggableAreaLimits.xRight;
+        } else {
+          newMainPinCoords.x = newMainPinCoords.x;
+        }
+
+        if (newMainPinCoords.y <= draggableAreaLimits.yTop) {
+          newMainPinCoords.y = draggableAreaLimits.yTop;
+        } else if (newMainPinCoords.y >= draggableAreaLimits.yBottom) {
+          newMainPinCoords.y = draggableAreaLimits.yBottom;
+        } else {
+          newMainPinCoords.y = newMainPinCoords.y;
+        }
+
+        mapPinMain.style.left = newMainPinCoords.x + 'px';
+        mapPinMain.style.top = newMainPinCoords.y + 'px';
+
+        var newAddressCoords = {
+          x: Math.round(newMainPinCoords.x + MAIN_PIN_INITIAL_WIDTH / 2),
+          y: Math.round(newMainPinCoords.y + MAIN_PIN_WITH_POINT_HEIGHT)
+        };
+
+        setOfferAddress(newAddressCoords, adFormAddress);
+      };
+
+      var onMouseUp = function (upEvt) {
+        upEvt.preventDefault();
+
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     }
   });
 

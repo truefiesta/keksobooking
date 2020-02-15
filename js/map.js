@@ -2,7 +2,9 @@
 
 (function () {
   // Импорт из других модулей.
-  var generateOffers = window.data.generate;
+  // var generateOffers = window.data.generate;
+  var loadOffers = window.upload.load;
+  // var showMessage = window.utils.showMessage;
   var hideElement = window.utils.hideElement;
   var disableForm = window.form.disable;
   var showElement = window.utils.showElement;
@@ -22,7 +24,7 @@
   var ADDRESS_VERTICAL_COORD_MIN = 130;
   var ADDRESS_VERTICAL_COORD_MAX = 630;
   var ADDRESS_HORIZONTAL_COORD_MIN = 0;
-  var OFFERS_NUMBER = 8;
+  // var OFFERS_NUMBER = 8;
 
   /**
    * @description Function returns x and y coordinates of the main pin center or main pin point.
@@ -96,7 +98,14 @@
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
   // Генерируем массив предложений.
-  var offers = generateOffers(OFFERS_NUMBER);
+  // var offers = generateOffers(OFFERS_NUMBER);
+
+  // var successTemplate = document.querySelector('#success').content;
+  // var errorTemplate = document.querySelector('#error').content;
+
+  var onSuccessOffersLoad = function (offers) {
+    renderAllMapPins(offers);
+  };
 
   // Определяем ширину блока, в котором перемещается главная метка
   var addressHorizontalCoordMax = map.offsetWidth;
@@ -111,7 +120,7 @@
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === 0 && (map.classList.contains('map--faded'))) {
       activatePage(map, adForm, adFormFieldsets);
-      renderAllMapPins(offers);
+      loadOffers(onSuccessOffersLoad, null);
       setOfferAddress(afterActivationMainPinCoordinates, adFormAddress);
     } else {
       evt.preventDefault();
@@ -181,7 +190,7 @@
   mapPinMain.addEventListener('keydown', function (evt) {
     if (evt.key === ENTER_KEY) {
       activatePage(map, adForm, adFormFieldsets);
-      renderAllMapPins(offers);
+      loadOffers(onSuccessOffersLoad, null);
       setOfferAddress(afterActivationMainPinCoordinates, adFormAddress);
     }
   });

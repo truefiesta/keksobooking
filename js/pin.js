@@ -21,6 +21,9 @@
     mapPinElement.style.top = offer.location.y - PIN_HEIGHT + 'px';
     mapPinElement.querySelector('img').src = offer.author.avatar;
     mapPinElement.querySelector('img').alt = offer.offer.title;
+    if (!offer.offer) {
+      mapPinElement.classList.add('hidden');
+    }
 
     return mapPinElement;
   };

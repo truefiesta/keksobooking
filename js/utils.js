@@ -60,6 +60,18 @@
     element.classList.remove(className);
   };
 
+  /**
+   * @description Function shows error or success message.
+   * @param {string} messageText - Text of a message.
+   * @param {object} elementTemplate - HTML template of the message element.
+   */
+  var showMessage = function (messageText, elementTemplate) {
+    var messageElement = elementTemplate.cloneNode(true);
+    var message = messageElement.querySelector('p');
+    message.textContent = messageText;
+    document.querySelector('main').appendChild(messageElement);
+  };
+
   window.utils = {
     ENTER_KEY: ENTER_KEY,
     ESC_KEY: ESC_KEY,
@@ -69,7 +81,8 @@
     getRandomInteger: getRandomInteger,
     generateArrayOfStrings: generateArrayOfStrings,
     hideElement: hideElement,
-    showElement: showElement
+    showElement: showElement,
+    showMessage: showMessage
   };
 
 })();

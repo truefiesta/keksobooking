@@ -79,8 +79,8 @@
     hideEmptyTextElement(mapCardCapacity, getRoomsAndGuestsString(offer));
     hideEmptyTextElement(mapCardTime, getCheckinAndCheckoutTime(offer));
 
+    var features = mapCardElement.querySelector('.popup__features');
     if (offer.offer.features.length > 0) {
-      var features = mapCardElement.querySelector('.popup__features');
       var featureFromHTML = features.querySelector('.popup__feature');
       features.innerHTML = '';
       for (var featureIndex = 0; featureIndex < offer.offer.features.length; featureIndex++) {
@@ -95,8 +95,8 @@
 
     hideEmptyTextElement(mapCardDescription, offer.offer.description);
 
+    var photos = mapCardElement.querySelector('.popup__photos');
     if (offer.offer.photos.length > 0) {
-      var photos = mapCardElement.querySelector('.popup__photos');
       var photoFromHTML = photos.querySelector('.popup__photo');
       photos.innerHTML = '';
       for (var photoIndexInOffer = 0; photoIndexInOffer < offer.offer.photos.length; photoIndexInOffer++) {

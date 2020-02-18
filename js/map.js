@@ -10,6 +10,7 @@
   var MAIN_PIN_IMAGE_HEIGHT = 62;
   var MAIN_PIN_POINT_HEIGHT = 22;
   var MAIN_PIN_WITH_POINT_HEIGHT = MAIN_PIN_IMAGE_HEIGHT + MAIN_PIN_POINT_HEIGHT;
+  var MAX_PINS_NUMBER = 5;
   // Находим блок с картой.
   var map = document.querySelector('.map');
 
@@ -36,11 +37,14 @@
    * @param {array} offers - An array of offer objects;
    */
   var renderAllMapPins = function (offers) {
+    var pinsNumber = offers.length > MAX_PINS_NUMBER ? MAX_PINS_NUMBER : offers.length;
+
     var mapPin = document.querySelector('#pin').content.querySelector('.map__pin');
     var mapPinsBlock = document.querySelector('.map__pins');
+
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < offers.length; i++) {
+    for (var i = 0; i < pinsNumber; i++) {
       var pin = createPin(offers[i], mapPin);
       addPinClickListener(pin, offers[i], map);
       fragment.appendChild(pin);

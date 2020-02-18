@@ -25,7 +25,6 @@
   var ADDRESS_VERTICAL_COORD_MIN = 130;
   var ADDRESS_VERTICAL_COORD_MAX = 630;
   var ADDRESS_HORIZONTAL_COORD_MIN = 0;
-  var PINS_MAX_NUMBER = 5;
 
   /* -------------- Функции для активации и деактивации страницы -------------- */
 

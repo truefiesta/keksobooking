@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   /**
    * @description Function removes attribute 'disabled' of every element from array of elements.
    * @param {array} elements - HTML elements
@@ -23,11 +24,16 @@
 
   /**
    * @description Function sets address in the ad-form address field as a string {x, y}.
+   * @param {string} mode - Active or inactive page mode.
    * @param {object} location - Object with x and y coordinates.
    * @param {object} addressField - Input field with address value.
    */
-  var setAddress = function (location, addressField) {
-    addressField.value = location.x + ', ' + location.y;
+  var setAddress = function (mode, location, addressField) {
+    if (mode === MODE_INACTIVE) {
+      addressField.defaultValue = location.x + ', ' + location.y;
+    } else {
+      addressField.value = location.x + ', ' + location.y;
+    }
   };
 
   /**
@@ -127,6 +133,7 @@
   });
 
   window.form = {
+    element: adForm,
     enable: enableFormElements,
     disable: disableFormElements,
     setAddress: setAddress

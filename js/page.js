@@ -176,6 +176,13 @@
     }
   };
 
+  var deleteOfferCard = function () {
+    var offerCard = map.querySelector('.map__card');
+    if (offerCard) {
+      offerCard.remove();
+    }
+  };
+
   // Находим шаблоны блоков с сообщением о успешной и неуспешной отправке формы.
   var successTemplate = document.querySelector('#success').content;
   var errorTemplate = document.querySelector('#error').content;
@@ -183,6 +190,8 @@
   adForm.addEventListener('reset', function () {
     // Главную метку возвращаем в исходное положение, остальные метки удаляем.
     deactivatePins();
+    // Удаляет открытую карточку предложения
+    deleteOfferCard();
     // Переводим страницу в неактивное состояние.
     deactivatePage(map, adForm, adFormFieldsets);
   });

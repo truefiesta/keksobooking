@@ -69,6 +69,14 @@
     var messageElement = elementTemplate.cloneNode(true);
     var message = messageElement.querySelector('p');
     message.textContent = messageText;
+
+    if (elementTemplate === document.querySelector('#error').content) {
+      var errorButton = messageElement.querySelector('.error__message');
+      errorButton.addEventListener('click', function () {
+        messageElement.remove();
+      });
+    }
+
     document.querySelector('main').appendChild(messageElement);
   };
 

@@ -14,6 +14,7 @@
   var disableForm = window.form.disable;
   var showElement = window.utils.showElement;
   var enableForm = window.form.enable;
+  var getSelectedOption = window.form.getSelectedOption;
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   var MODE_ACTIVE = window.utils.MODE_ACTIVE;
   var ESC_KEY = window.utils.ESC_KEY;
@@ -66,9 +67,12 @@
   // Находим fieldsets формы .ad-form.
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
+  // Массив, в который будем сохранять загруженные с сервера предложения.
+  var offers = [];
   // При успешной загрузке данных с сервера, показываем пины.
-  var onSuccessOffersLoad = function (offers) {
-    renderPins(offers);
+  var onSuccessOffersLoad = function (data) {
+    offers = data;
+    updatePins();
   };
 
   // Определяем ширину блока, в котором перемещается главная метка
@@ -159,6 +163,33 @@
       setOfferAddress(MODE_ACTIVE, afterActivationMainPinCoordinates, adFormAddress);
     }
   });
+
+  /* -------------- Для фильтрации пинов -------------- */
+  var filtersForm = document.querySelector('.map__filters');
+  var filterHouseType = filtersForm.querySelector('select[name = housing-type]');
+
+  filterHouseType.addEventListener('change', function () {
+    updatePins();
+  });
+
+  var updatePins = function () {
+    deleteOfferCard();
+    deactivatePins();
+
+    var filteredOffers = [];
+
+    var sameTypeOffers = offers.filter(function (it) {
+      return it.offer.type === getSelectedOption(filterHouseType).value;
+    });
+
+    if (getSelectedOption(filterHouseType).value === 'any') {
+      filteredOffers = offers;
+    } else {
+      filteredOffers = sameTypeOffers;
+    }
+
+    renderPins(filteredOffers);
+  };
 
   /* -------------- Для деактивации страницы -------------- */
 

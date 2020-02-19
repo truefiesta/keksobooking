@@ -136,7 +136,8 @@
     element: adForm,
     enable: enableFormElements,
     disable: disableFormElements,
-    setAddress: setAddress
+    setAddress: setAddress,
+    getSelectedOption: getSelectedOption
   };
 
 })();

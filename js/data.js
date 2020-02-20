@@ -82,7 +82,8 @@
   };
 
   window.data = {
-    generate: generateOffers
+    generate: generateOffers,
+    OFFER_FEATURES: OFFER_FEATURES
   };
 
 })();

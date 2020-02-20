@@ -80,6 +80,43 @@
     document.querySelector('main').appendChild(messageElement);
   };
 
+  /**
+   * @description Function removes attribute 'disabled' of every element from array of elements.
+   * @param {array} elements - HTML elements
+   */
+  var enableFormElements = function (elements) {
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].removeAttribute('disabled');
+    }
+  };
+
+  /**
+   * @description Function sets 'disabled' attribute on the element from elements array. If element is a fieldset, it will get 'disabled' attribute.
+   * @param {array} elements Array of HTML form elements.
+   */
+  var disableFormElements = function (elements) {
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].setAttribute('disabled', '');
+    }
+  };
+
+  /**
+   * @description Function returns an option, that has 'selected' attribute.
+   * @param {object} selectElement - HTML select element.
+   * @return {object} - HTML option element that is selected.
+   */
+  var getSelectedOption = function (selectElement) {
+    var opt;
+    for (var i = 0; i < selectElement.options.length; i++) {
+      if (selectElement.options[i].selected) {
+        opt = selectElement.options[i];
+        break;
+      }
+    }
+
+    return opt;
+  };
+
   window.utils = {
     ENTER_KEY: ENTER_KEY,
     ESC_KEY: ESC_KEY,
@@ -90,7 +127,10 @@
     generateArrayOfStrings: generateArrayOfStrings,
     hideElement: hideElement,
     showElement: showElement,
-    showMessage: showMessage
+    showMessage: showMessage,
+    enableFormElements: enableFormElements,
+    disableFormElements: disableFormElements,
+    getSelectedOption: getSelectedOption
   };
 
 })();

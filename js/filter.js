@@ -106,7 +106,8 @@
   };
 
   window.filter = {
-    updatePins: updatePins
+    updatePins: updatePins,
+    element: filtersForm
   };
 
 })();

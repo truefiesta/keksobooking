@@ -41,6 +41,11 @@
   // Находим fieldsets формы .ad-form.
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
 
+  // Находим элементы формы с фильтрами.
+  var filtersForm = document.querySelector('.map__filters');
+  var filtersFormSelects = filtersForm.querySelectorAll('select');
+  var filtersFormFieldsets = filtersForm.querySelectorAll('fieldset');
+
   // Функция, чтобы убрать метки и вернуть главную метку в исходное положение
   var deactivatePins = function () {
     var allMapPins = map.querySelectorAll('.map__pin');
@@ -67,6 +72,8 @@
     hideElement(map, 'map--faded');
     hideElement(adForm, 'ad-form--disabled');
     disableForm(adFormFieldsets);
+    disableForm(filtersFormSelects);
+    disableForm(filtersFormFieldsets);
     setOfferAddress(MODE_INACTIVE, initialMainPinCoordinates, adFormAddress);
   };
 
@@ -75,8 +82,13 @@
     showElement(map, 'map--faded');
     showElement(adForm, 'ad-form--disabled');
     enableForm(adFormFieldsets);
+    enableForm(filtersFormSelects);
+    enableForm(filtersFormFieldsets);
     setOfferAddress(MODE_ACTIVE, afterActivationMainPinCoordinates, adFormAddress);
   };
+
+  // При открытии сайта страница в неактивном состоянии.
+  deactivatePage();
 
   window.page = {
     activate: activatePage,

@@ -2,6 +2,7 @@
 
 (function () {
   var adForm = window.adform.element;
+  var filtersForm = window.filter.element;
   var saveForm = window.upload.save;
   var showMessage = window.utils.showMessage;
   var deactivatePins = window.page.deactivatePins;
@@ -26,6 +27,7 @@
   var onFormLoadSuccess = function () {
     showMessage(SUCCESS_MESSAGE, successTemplate);
     adForm.reset();
+    filtersForm.reset();
   };
 
   var onFormLoadError = function (errorMessage) {

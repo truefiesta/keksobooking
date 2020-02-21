@@ -2,25 +2,7 @@
 
 (function () {
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
-  /**
-   * @description Function removes attribute 'disabled' of every element from array of elements.
-   * @param {array} elements - HTML elements
-   */
-  var enableFormElements = function (elements) {
-    for (var i = 0; i < elements.length; i++) {
-      elements[i].removeAttribute('disabled');
-    }
-  };
-
-  /**
-   * @description Function sets 'disabled' attribute on the element from elements array. If element is a fieldset, it will get 'disabled' attribute.
-   * @param {array} elements Array of HTML form elements.
-   */
-  var disableFormElements = function (elements) {
-    for (var i = 0; i < elements.length; i++) {
-      elements[i].setAttribute('disabled', '');
-    }
-  };
+  var getSelectedOption = window.utils.getSelectedOption;
 
   /**
    * @description Function sets address in the ad-form address field as a string {x, y}.
@@ -34,23 +16,6 @@
     } else {
       addressField.value = location.x + ', ' + location.y;
     }
-  };
-
-  /**
-   * @description Function returns an option, that has 'selected' attribute.
-   * @param {object} selectElement - HTML select element.
-   * @return {object} - HTML option element that is selected.
-   */
-  var getSelectedOption = function (selectElement) {
-    var opt;
-    for (var i = 0; i < selectElement.options.length; i++) {
-      if (selectElement.options[i].selected) {
-        opt = selectElement.options[i];
-        break;
-      }
-    }
-
-    return opt;
   };
 
   // Находим форму ad-form.
@@ -132,12 +97,9 @@
     onTimeChange(target);
   });
 
-  window.form = {
+  window.adform = {
     element: adForm,
-    enable: enableFormElements,
-    disable: disableFormElements,
     setAddress: setAddress,
-    getSelectedOption: getSelectedOption
   };
 
 })();

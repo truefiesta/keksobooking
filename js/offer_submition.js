@@ -7,7 +7,8 @@
   var showMessage = window.utils.showMessage;
   var deactivatePins = window.page.deactivatePins;
   var deleteOfferCard = window.page.deleteOfferCard;
-  var deactivatePage = window.page.deactivate;
+  var resetMainPinListeners = window.mainPin.resetEventListeners;
+  var deactivateMapAndForms = window.page.deactivate;
   var ESC_KEY = window.utils.ESC_KEY;
   var SUCCESS_MESSAGE = 'Ваше объявление опубликовано.';
 
@@ -20,8 +21,10 @@
     deactivatePins();
     // Удаляет открытую карточку предложения
     deleteOfferCard();
+    // Восстанавливаем обработчики событий на главной метке.
+    resetMainPinListeners();
     // Переводим страницу в неактивное состояние.
-    deactivatePage();
+    deactivateMapAndForms();
   });
 
   var onFormLoadSuccess = function () {

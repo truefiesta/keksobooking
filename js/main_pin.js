@@ -7,6 +7,8 @@
   var setOfferAddress = window.adform.setAddress;
   var updatePins = window.filter.updatePins;
   var loadOffers = window.offers.load;
+  var addAdFormListeners = window.adform.addListeners;
+  var addFiltersFormListener = window.filter.addListener;
   var MODE_ACTIVE = window.utils.MODE_ACTIVE;
   var ENTER_KEY = window.utils.ENTER_KEY;
   var MAIN_PIN_INITIAL_WIDTH = window.map.MAIN_PIN_INITIAL_WIDTH;
@@ -29,10 +31,7 @@
   // Находим поле адреса в форме ad-form.
   var adFormAddress = adForm.querySelector('input[name = address]');
 
-  // Полная активация сервиса.
-  var activatePage = function () {
-    activateMapAndForms();
-    loadOffers(updatePins);
+  var setMainPinEventListeners = function () {
     mapPinMain.removeEventListener('keydown', onMapPinEnterKeyDown);
     mapPinMain.removeEventListener('mousedown', onMapPinMouseDownBeforeActivation);
     mapPinMain.addEventListener('mousedown', onMapPinMouseDownAfterActivation);
@@ -42,6 +41,15 @@
     mapPinMain.removeEventListener('mousedown', onMapPinMouseDownAfterActivation);
     mapPinMain.addEventListener('mousedown', onMapPinMouseDownBeforeActivation);
     mapPinMain.addEventListener('keydown', onMapPinEnterKeyDown);
+  };
+
+  // Полная активация сервиса.
+  var activatePage = function () {
+    activateMapAndForms();
+    loadOffers(updatePins);
+    setMainPinEventListeners();
+    addAdFormListeners();
+    addFiltersFormListener();
   };
 
   // Активация страницы при нажатии главной кнопкой мыши на главную метку.

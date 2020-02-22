@@ -19,15 +19,6 @@
   var filterRoomsNumber = filtersForm.querySelector('select[name = housing-rooms]');
   var filterGuestsNumber = filtersForm.querySelector('select[name = housing-guests]');
 
-  var onFilterChange = function (evt) {
-    if (evt.target && evt.target.matches('select.map__filter') || evt.target.matches('input[name = features]')) {
-      var debouncedPinsUpdate = debounce(updatePins);
-      debouncedPinsUpdate();
-    }
-  };
-
-  filtersForm.addEventListener('change', onFilterChange);
-
   var checkOfferPriceRange = function (offer) {
     var price = parseInt(offer.offer.price, 10);
     if (price < HousingPrice.LOW) {
@@ -105,9 +96,26 @@
     renderPins(filteredOffers);
   };
 
+  var onFilterChange = function (evt) {
+    if (evt.target && evt.target.matches('select.map__filter') || evt.target.matches('input[name = features]')) {
+      var debouncedPinsUpdate = debounce(updatePins);
+      debouncedPinsUpdate();
+    }
+  };
+
+  var addFiltersFormListener = function () {
+    filtersForm.addEventListener('change', onFilterChange);
+  };
+
+  var removeFiltersformListener = function () {
+    filtersForm.removeEventListener('change', onFilterChange);
+  };
+
   window.filter = {
     updatePins: updatePins,
-    element: filtersForm
+    element: filtersForm,
+    addListener: addFiltersFormListener,
+    removeListener: removeFiltersformListener
   };
 
 })();

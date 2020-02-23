@@ -3,6 +3,7 @@
 (function () {
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   var getSelectedOption = window.utils.getSelectedOption;
+  var FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
   /**
    * @description Function sets address in the ad-form address field as a string {x, y}.
@@ -20,9 +21,8 @@
 
   // Находим форму ad-form.
   var adForm = document.querySelector('.ad-form');
-  // Находим поле для ввода количества комнат в форме ad-form.
+  // Находим поле для ввода количества комнат и поле для ввода количества гостей.
   var adFormRooms = adForm.querySelector('select[name = rooms]');
-  // Находим поле для ввода количества гостей в форме ad-form.
   var adFormGuests = adForm.querySelector('select[name = capacity]');
 
   // Функция проверяет соответствие количества комнат количеству гостей.
@@ -43,9 +43,6 @@
     checkRoomsAndGuestsValidity(guestsCurrentValue, roomsCurrentValue);
   };
 
-  adFormGuests.addEventListener('change', onRoomsOrGuestsChange);
-  adFormRooms.addEventListener('change', onRoomsOrGuestsChange);
-
   // Поле «Тип жилья» влияет на минимальное значение поля «Цена за ночь»
   var getMinPriceForOfferType = function (selectedTypeValue) {
     switch (selectedTypeValue) {
@@ -57,9 +54,8 @@
     return 0;
   };
 
-  // Находим поле для ввода цены за ночь.
+  // Находим поле для ввода цены за ночь и поле для выбора типа жилья.
   var adFormPrice = adForm.querySelector('input[name = price]');
-  // Находим поле для выбора типа жилья.
   var adFormTypes = adForm.querySelector('select[name = type]');
 
   // Определяем выбранное значение в поле с типом предложения.
@@ -69,15 +65,16 @@
     adFormPrice['placeholder'] = adFormPrice.min;
   };
 
-  adFormTypes.addEventListener('change', onOfferTypeChange);
-
   // Находим поля для выбора времени въезда и выезда.
   var adCheckinTimes = adForm.querySelector('select[name = timein]');
   var adCheckoutTimes = adForm.querySelector('select[name = timeout]');
 
-  var onTimeChange = function (element) {
+  // Обработчик изменения времени вьезда и выезда.
+  var onCheckinTimesChange = function (evt) {
+    var element = evt.target;
     var checkinTime = getSelectedOption(adCheckinTimes).value;
     var checkoutTime = getSelectedOption(adCheckoutTimes).value;
+
     if (checkinTime !== checkoutTime) {
       if (element === adCheckinTimes) {
         adCheckoutTimes.value = checkinTime;
@@ -87,19 +84,104 @@
     }
   };
 
-  adCheckinTimes.addEventListener('change', function (evt) {
-    var target = evt.target;
-    onTimeChange(target);
-  });
+  // Функция для создания обработчика при загрузке/изменении картинок в форме ad-form.
+  var createPictureChangeListener = function (filePreviewElement) {
+    var picturePreview = filePreviewElement;
 
-  adCheckoutTimes.addEventListener('change', function (evt) {
-    var target = evt.target;
-    onTimeChange(target);
-  });
+    return function (evt) {
+      var pictureFile = evt.target.files[0];
+      var pictureFileName = pictureFile.name.toLowerCase();
+
+      if (pictureFile) {
+        var isApprortiateFormat = FILE_TYPES.some(function (it) {
+          return pictureFileName.endsWith(it);
+        });
+
+        if (isApprortiateFormat) {
+          var picturePreviewImg = picturePreview.querySelector('img');
+
+          if (!picturePreviewImg) {
+            var img = document.createElement('img');
+            img.alt = 'Фотография жилья';
+            img.width = 70;
+            img.height = 70;
+            picturePreview.appendChild(img);
+            picturePreviewImg = picturePreview.querySelector('img');
+          }
+
+          var reader = new FileReader();
+
+          reader.addEventListener('load', function (evtRead) {
+            picturePreviewImg.src = evtRead.target.result;
+          });
+
+          reader.readAsDataURL(pictureFile);
+        }
+      }
+    };
+  };
+
+  // Находим поля для загрузки аватарки и для превью аватарки
+  var adformAvatar = adForm.querySelector('.ad-form__field');
+  var adFormAvatarPreview = adForm.querySelector('.ad-form-header__preview');
+  // Создаем обработчик для изменения аватарки.
+  var onAvatarChange = createPictureChangeListener(adFormAvatarPreview);
+
+  var defaultAvatar = adFormAvatarPreview.querySelector('img').cloneNode();
+
+  var restoreDefaultAdFormAvatar = function () {
+    var copyDefaultAvatar = defaultAvatar.cloneNode();
+    adFormAvatarPreview.innerHTML = '';
+    adFormAvatarPreview.appendChild(copyDefaultAvatar);
+  };
+
+  // Находим поля для загрузки фотографии и превью фотографии
+  var adFormPhoto = adForm.querySelector('.ad-form__upload');
+  var adFormPhotoPreview = adForm.querySelector('.ad-form__photo');
+  // Создаем обработчик для изменения фотографии.
+  var onAdFormPhotoChange = createPictureChangeListener(adFormPhotoPreview);
+
+  var resetAdFormPhoto = function () {
+    adFormPhotoPreview.innerHTML = '';
+  };
+
+  // Функция для добавления слушателей на поля формы ad-form.
+  var addAdFormListeners = function () {
+    // Навешиваем слушатель события измненения на поле тип жилья.
+    adFormTypes.addEventListener('change', onOfferTypeChange);
+    // Навешиваем слушатели события измненения на поля время въезда/выезда.
+    adCheckinTimes.addEventListener('change', onCheckinTimesChange);
+    adCheckoutTimes.addEventListener('change', onCheckinTimesChange);
+    // Обработчики изменения количества комнат и гостей.
+    adFormGuests.addEventListener('change', onRoomsOrGuestsChange);
+    adFormRooms.addEventListener('change', onRoomsOrGuestsChange);
+    // Навешиваем слушатели события изменения аватарки и фотографии.
+    adformAvatar.addEventListener('change', onAvatarChange);
+    adFormPhoto.addEventListener('change', onAdFormPhotoChange);
+  };
+
+  // Функция для удаления слушателей с полей формы ad-form.
+  var removeAdFormListeners = function () {
+    adFormTypes.removeEventListener('change', onOfferTypeChange);
+    adCheckinTimes.removeEventListener('change', onCheckinTimesChange);
+    adCheckoutTimes.removeEventListener('change', onCheckinTimesChange);
+    adFormGuests.removeEventListener('change', onRoomsOrGuestsChange);
+    adFormRooms.removeEventListener('change', onRoomsOrGuestsChange);
+    adformAvatar.removeEventListener('change', onAvatarChange);
+    adFormPhoto.removeEventListener('change', onAdFormPhotoChange);
+  };
+
+  var resetAdFormElements = function () {
+    restoreDefaultAdFormAvatar();
+    resetAdFormPhoto();
+    removeAdFormListeners();
+  };
 
   window.adform = {
     element: adForm,
     setAddress: setAddress,
+    addListeners: addAdFormListeners,
+    reset: resetAdFormElements
   };
 
 })();

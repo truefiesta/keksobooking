@@ -1,20 +1,11 @@
 'use strict';
 
 (function () {
-  /**
-   * @description Function returns Russian word for offer type;
-   * @param {object} offer - An object with offer data.
-   * @return {string} - a Russian word for the offer type.
-   */
-  var getOfferType = function (offer) {
-    switch (offer.offer.type) {
-      case 'flat': return 'Квартира';
-      case 'bungalo': return 'Бунгало';
-      case 'house': return 'Дом';
-      case 'palace': return 'Дворец';
-    }
-
-    return offer.offer.type;
+  var offerTypeEngToRus = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом',
+    'palace': 'Дворец'
   };
 
   /**
@@ -75,7 +66,7 @@
     hideEmptyTextElement(mapCardTitle, offer.offer.title);
     hideEmptyTextElement(mapCardAddress, offer.offer.address);
     hideEmptyTextElement(mapCardPrice, offer.offer.price);
-    hideEmptyTextElement(mapCardType, getOfferType(offer));
+    hideEmptyTextElement(mapCardType, offerTypeEngToRus[offer.offer.type]);
     hideEmptyTextElement(mapCardCapacity, getRoomsAndGuestsString(offer));
     hideEmptyTextElement(mapCardTime, getCheckinAndCheckoutTime(offer));
 

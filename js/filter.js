@@ -81,15 +81,20 @@
     };
   };
 
-  var getFilteredOffers = function () {
-    var filteredOffers = getOffers()
-    .filter(filterByOfferType)
-    .filter(filterByPriceRange)
-    .filter(filterByRoomsNumber)
-    .filter(filterByGuestsNumber);
+  // Создаем массив фильтров.
+  var offerFilters = [filterByOfferType, filterByPriceRange, filterByRoomsNumber, filterByGuestsNumber];
 
-    for (var featureIndex = 0; featureIndex < OFFER_FEATURES.length; featureIndex++) {
-      filteredOffers = filteredOffers.filter(filterByFeature(OFFER_FEATURES[featureIndex]));
+  // Дополняем массив фильтров фильтрами по фичам.
+  OFFER_FEATURES.forEach(function (offerFeature) {
+    offerFilters.push(filterByFeature(offerFeature));
+  });
+
+  // Функция возвращает отфильтрованный массив.
+  var getFilteredOffers = function () {
+    var filteredOffers = getOffers();
+
+    for (var i = 0; i < offerFilters.length; i++) {
+      filteredOffers = filteredOffers.filter(offerFilters[i]);
     }
 
     return filteredOffers;

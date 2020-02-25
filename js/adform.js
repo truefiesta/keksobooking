@@ -189,10 +189,19 @@
     });
   };
 
+  // Запоминаем начальное минимальное значение цены.
+  var adFormDefaultMinPrice = adFormPrice.min;
+  // Функция устанавливает начальное минимальное значение цены.
+  var setDefaultMinPrice = function () {
+    adFormPrice.min = adFormDefaultMinPrice;
+    adFormPrice['placeholder'] = adFormDefaultMinPrice;
+  };
+
   var resetAdFormElements = function () {
     restoreDefaultAdFormAvatar();
     resetAdFormPhoto();
     removeAdFormListeners();
+    setDefaultMinPrice();
   };
 
   window.adform = {

@@ -877,6 +877,12 @@ fieldset {
           box-shadow: 0 0 2px 2px #ff6547;
 }
 
+.ad-form__invalid input:invalid,
+.ad-form__invalid select:invalid,
+.ad-form__invalid textarea:invalid {
+  box-shadow: 0 0 2px 2px #da0000;
+}
+
 
 /* Футер
    ========================================================================== */

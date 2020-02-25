@@ -145,6 +145,17 @@
     adFormPhotoPreview.innerHTML = '';
   };
 
+  var onInvalidFormElement = function (evt) {
+    evt.target.parentElement.classList.add('ad-form__invalid');
+  };
+
+  // Находим все элементы формы и создаем из них массивы.
+  var allAdFormInputs = Array.from(adForm.querySelectorAll('input'));
+  var allAdFormSelects = Array.from(adForm.querySelectorAll('select'));
+  var allAdFormTextareas = Array.from(adForm.querySelectorAll('textarea'));
+  // Объединяем все элементы формы в один массив.
+  var allAdFormElements = allAdFormInputs.concat(allAdFormSelects, allAdFormTextareas);
+
   // Функция для добавления слушателей на поля формы ad-form.
   var addAdFormListeners = function () {
     // Навешиваем слушатель события измненения на поле тип жилья.
@@ -158,6 +169,10 @@
     // Навешиваем слушатели события изменения аватарки и фотографии.
     adformAvatar.addEventListener('change', onAvatarChange);
     adFormPhoto.addEventListener('change', onAdFormPhotoChange);
+    // Добавляем слушатели события invalid на все элементы формы.
+    allAdFormElements.forEach(function (adFormInput) {
+      adFormInput.addEventListener('invalid', onInvalidFormElement);
+    });
   };
 
   // Функция для удаления слушателей с полей формы ad-form.
@@ -169,6 +184,9 @@
     adFormRooms.removeEventListener('change', onRoomsOrGuestsChange);
     adformAvatar.removeEventListener('change', onAvatarChange);
     adFormPhoto.removeEventListener('change', onAdFormPhotoChange);
+    allAdFormElements.forEach(function (adFormInput) {
+      adFormInput.removeEventListener('invalid', onInvalidFormElement);
+    });
   };
 
   var resetAdFormElements = function () {

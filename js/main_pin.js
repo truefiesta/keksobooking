@@ -9,6 +9,7 @@
   var loadOffers = window.offers.load;
   var addAdFormListeners = window.adform.addListeners;
   var addFiltersFormListener = window.filter.addListener;
+  var addMessageListeners = window.message.addListeners;
   var MODE_ACTIVE = window.utils.MODE_ACTIVE;
   var ENTER_KEY = window.utils.ENTER_KEY;
   var MAIN_PIN_INITIAL_WIDTH = window.map.MAIN_PIN_INITIAL_WIDTH;
@@ -50,6 +51,7 @@
     setMainPinEventListeners();
     addAdFormListeners();
     addFiltersFormListener();
+    addMessageListeners();
   };
 
   // Активация страницы при нажатии главной кнопкой мыши на главную метку.

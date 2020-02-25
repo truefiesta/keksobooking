@@ -7,7 +7,7 @@
   var renderPins = window.map.renderPins;
   var debounce = window.debounce.set;
   var getSelectedOption = window.utils.getSelectedOption;
-  var OFFER_FEATURES = window.data.OFFER_FEATURES;
+  var OFFER_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var HousingPrice = {
     LOW: 10000,
     HIGH: 50000

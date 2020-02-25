@@ -4,6 +4,12 @@
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   var getSelectedOption = window.utils.getSelectedOption;
   var FILE_TYPES = ['jpg', 'jpeg', 'png'];
+  var typeValueToMinPriceValue = {
+    'flat': 1000,
+    'bungalo': 0,
+    'house': 5000,
+    'palace': 10000
+  };
 
   /**
    * @description Function sets address in the ad-form address field as a string {x, y}.
@@ -43,17 +49,6 @@
     checkRoomsAndGuestsValidity(guestsCurrentValue, roomsCurrentValue);
   };
 
-  // Поле «Тип жилья» влияет на минимальное значение поля «Цена за ночь»
-  var getMinPriceForOfferType = function (selectedTypeValue) {
-    switch (selectedTypeValue) {
-      case 'flat': return 1000;
-      case 'bungalo': return 0;
-      case 'house': return 5000;
-      case 'palace': return 10000;
-    }
-    return 0;
-  };
-
   // Находим поле для ввода цены за ночь и поле для выбора типа жилья.
   var adFormPrice = adForm.querySelector('input[name = price]');
   var adFormTypes = adForm.querySelector('select[name = type]');
@@ -61,7 +56,7 @@
   // Определяем выбранное значение в поле с типом предложения.
   var onOfferTypeChange = function (evt) {
     var adFormSelectedType = getSelectedOption(evt.target);
-    adFormPrice.min = getMinPriceForOfferType(adFormSelectedType.value);
+    adFormPrice.min = typeValueToMinPriceValue[adFormSelectedType.value];
     adFormPrice['placeholder'] = adFormPrice.min;
   };
 

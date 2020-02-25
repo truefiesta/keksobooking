@@ -11,13 +11,14 @@
   var resetAdForm = window.adform.reset;
   var removeFiltersformListener = window.filter.removeListener;
   var deactivateMapAndForms = window.page.deactivate;
+  var setAdFormActivator = window.mainPin.setAdFormActivator;
   var SUCCESS_MESSAGE = 'Ваше объявление опубликовано.';
 
   // Находим шаблоны блоков с сообщением о успешной и неуспешной отправке формы.
   var successTemplate = document.querySelector('#success').content;
   var errorTemplate = document.querySelector('#error').content;
 
-  adForm.addEventListener('reset', function () {
+  var onFormReset = function () {
     // Главную метку возвращаем в исходное положение, остальные метки удаляем.
     deactivatePins();
     // Удаляет открытую карточку предложения.
@@ -30,22 +31,39 @@
     removeFiltersformListener();
     // Переводим страницу в неактивное состояние.
     deactivateMapAndForms();
-  });
+  };
 
   var onFormLoadSuccess = function () {
     showMessage(SUCCESS_MESSAGE, successTemplate);
     adForm.reset();
     filtersForm.reset();
+    removeAdFormSubmitResetListeners();
   };
 
   var onFormLoadError = function (errorMessage) {
     showMessage(errorMessage, errorTemplate);
   };
 
-  adForm.addEventListener('submit', function (evt) {
+  var onFormSubmit = function (evt) {
     evt.preventDefault();
     saveForm(new FormData(adForm), onFormLoadSuccess, onFormLoadError);
-  });
+  };
 
+  var addAdFormSubmitResetListeners = function () {
+    adForm.addEventListener('reset', onFormReset);
+    adForm.addEventListener('submit', onFormSubmit);
+  };
+
+  var removeAdFormSubmitResetListeners = function () {
+    adForm.removeEventListener('reset', onFormReset);
+    adForm.removeEventListener('submit', onFormSubmit);
+  };
+
+  // Передаем в качестве коллбэка функцию для добавления слушателей событий submit и reset формы.
+  setAdFormActivator(addAdFormSubmitResetListeners);
+
+  window.offerSubmition = {
+    addAdFormSubmitResetListeners: addAdFormSubmitResetListeners
+  };
 
 })();

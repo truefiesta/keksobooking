@@ -4,6 +4,8 @@
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   var getSelectedOption = window.utils.getSelectedOption;
   var FILE_TYPES = ['jpg', 'jpeg', 'png'];
+  var GUESTS_CUSTOM_VALIDITY_MESSAGE = 'Количество гостей не соответствует количеству комнат.';
+  var PHOTO_ALT_TEXT = 'Фотография жилья';
   var typeValueToMinPriceValue = {
     'flat': 1000,
     'bungalo': 0,
@@ -38,7 +40,7 @@
     } else if ((guestsValue !== 0) && (roomsValue !== 100) && (guestsValue <= roomsValue)) {
       adFormGuests.setCustomValidity('');
     } else {
-      adFormGuests.setCustomValidity('Количество гостей не соответствует количеству комнат.');
+      adFormGuests.setCustomValidity(GUESTS_CUSTOM_VALIDITY_MESSAGE);
     }
   };
 
@@ -97,7 +99,7 @@
 
           if (!picturePreviewImg) {
             var img = document.createElement('img');
-            img.alt = 'Фотография жилья';
+            img.alt = PHOTO_ALT_TEXT;
             img.width = 70;
             img.height = 70;
             picturePreview.appendChild(img);

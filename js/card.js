@@ -96,6 +96,7 @@
         photos.appendChild(photo);
       }
     } else {
+      photos.classList.remove('popup__photos');
       photos.classList.add('hidden');
     }
 

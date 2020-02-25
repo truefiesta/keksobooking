@@ -68,12 +68,11 @@
 
   // Обработчик изменения времени вьезда и выезда.
   var onCheckinTimesChange = function (evt) {
-    var element = evt.target;
     var checkinTime = getSelectedOption(adCheckinTimes).value;
     var checkoutTime = getSelectedOption(adCheckoutTimes).value;
 
     if (checkinTime !== checkoutTime) {
-      if (element === adCheckinTimes) {
+      if (evt.target === adCheckinTimes) {
         adCheckoutTimes.value = checkinTime;
       } else {
         adCheckinTimes.value = checkoutTime;
@@ -83,7 +82,6 @@
 
   // Функция для создания обработчика при загрузке/изменении картинок в форме ad-form.
   var createPictureChangeListener = function (filePreviewElement) {
-    var picturePreview = filePreviewElement;
 
     return function (evt) {
       var pictureFile = evt.target.files[0];
@@ -95,15 +93,15 @@
         });
 
         if (isApprortiateFormat) {
-          var picturePreviewImg = picturePreview.querySelector('img');
+          var picturePreviewImg = filePreviewElement.querySelector('img');
 
           if (!picturePreviewImg) {
             var img = document.createElement('img');
             img.alt = PHOTO_ALT_TEXT;
             img.width = 70;
             img.height = 70;
-            picturePreview.appendChild(img);
-            picturePreviewImg = picturePreview.querySelector('img');
+            filePreviewElement.appendChild(img);
+            picturePreviewImg = filePreviewElement.querySelector('img');
           }
 
           var reader = new FileReader();

@@ -12,6 +12,12 @@
     LOW: 10000,
     HIGH: 50000
   };
+  var FilterValue = {
+    LOW: 'low',
+    HIGH: 'high',
+    MIDDLE: 'middle',
+    ANY: 'any'
+  };
 
   var filtersForm = document.querySelector('.map__filters');
   var filterHouseType = filtersForm.querySelector('select[name = housing-type]');
@@ -22,18 +28,18 @@
   var checkOfferPriceRange = function (offer) {
     var price = parseInt(offer.offer.price, 10);
     if (price < HousingPrice.LOW) {
-      return 'low';
+      return FilterValue.LOW;
     } else if (price > HousingPrice.HIGH) {
-      return 'high';
+      return FilterValue.HIGH;
     } else if (price >= HousingPrice.LOW && price <= HousingPrice.HIGH) {
-      return 'middle';
+      return FilterValue.MIDDLE;
     } else {
-      return 'any';
+      return FilterValue.ANY;
     }
   };
 
   var filterByOfferType = function (offer) {
-    if (getSelectedOption(filterHouseType).value === 'any') {
+    if (getSelectedOption(filterHouseType).value === FilterValue.ANY) {
       return true;
     } else {
       return offer.offer.type === getSelectedOption(filterHouseType).value;
@@ -41,7 +47,7 @@
   };
 
   var filterByPriceRange = function (offer) {
-    if (getSelectedOption(filterPrice).value === 'any') {
+    if (getSelectedOption(filterPrice).value === FilterValue.ANY) {
       return true;
     } else {
       return checkOfferPriceRange(offer) === getSelectedOption(filterPrice).value;
@@ -49,7 +55,7 @@
   };
 
   var filterByRoomsNumber = function (offer) {
-    if (getSelectedOption(filterRoomsNumber).value === 'any') {
+    if (getSelectedOption(filterRoomsNumber).value === FilterValue.ANY) {
       return true;
     } else {
       return offer.offer.rooms === parseInt((getSelectedOption(filterRoomsNumber).value), 10);
@@ -57,7 +63,7 @@
   };
 
   var filterByGuestsNumber = function (offer) {
-    if (getSelectedOption(filterGuestsNumber).value === 'any') {
+    if (getSelectedOption(filterGuestsNumber).value === FilterValue.ANY) {
       return true;
     } else {
       return offer.offer.guests === parseInt((getSelectedOption(filterGuestsNumber).value), 10);

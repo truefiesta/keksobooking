@@ -81,20 +81,15 @@
     };
   };
 
-  // Создаем массив фильтров.
-  var offerFilters = [filterByOfferType, filterByPriceRange, filterByRoomsNumber, filterByGuestsNumber];
-
-  // Дополняем массив фильтров фильтрами по фичам.
-  OFFER_FEATURES.forEach(function (offerFeature) {
-    offerFilters.push(filterByFeature(offerFeature));
-  });
-
-  // Функция возвращает отфильтрованный массив.
   var getFilteredOffers = function () {
-    var filteredOffers = getOffers();
+    var filteredOffers = getOffers()
+    .filter(filterByOfferType)
+    .filter(filterByPriceRange)
+    .filter(filterByRoomsNumber)
+    .filter(filterByGuestsNumber);
 
-    for (var i = 0; i < offerFilters.length; i++) {
-      filteredOffers = filteredOffers.filter(offerFilters[i]);
+    for (var featureIndex = 0; featureIndex < OFFER_FEATURES.length; featureIndex++) {
+      filteredOffers = filteredOffers.filter(filterByFeature(OFFER_FEATURES[featureIndex]));
     }
 
     return filteredOffers;

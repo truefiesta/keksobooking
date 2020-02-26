@@ -9,7 +9,7 @@
   var deleteOfferCard = window.page.deleteOfferCard;
   var resetMainPinListeners = window.mainPin.resetEventListeners;
   var resetAdForm = window.adform.reset;
-  var removeFiltersformListener = window.filter.removeListener;
+  var resetFiltersForm = window.filter.reset;
   var deactivateMapAndForms = window.page.deactivate;
   var setAdFormActivator = window.mainPin.setAdFormActivator;
   var SUCCESS_MESSAGE = 'Ваше объявление опубликовано.';
@@ -27,8 +27,8 @@
     resetMainPinListeners();
     // Удаляем слушатели adform.
     resetAdForm();
-    // Удаляем слушатель событий формы с фильтрами.
-    removeFiltersformListener();
+    // Удаляем слушатель событий формы с фильтрами и переводим ее в начальное состояние.
+    resetFiltersForm();
     // Переводим страницу в неактивное состояние.
     deactivateMapAndForms();
   };

@@ -113,15 +113,16 @@
     filtersForm.addEventListener('change', onFilterChange);
   };
 
-  var removeFiltersformListener = function () {
+  var resetFiltersForm = function () {
     filtersForm.removeEventListener('change', onFilterChange);
+    filtersForm.reset();
   };
 
   window.filter = {
     updatePins: updatePins,
     element: filtersForm,
     addListener: addFiltersFormListener,
-    removeListener: removeFiltersformListener
+    reset: resetFiltersForm
   };
 
 })();

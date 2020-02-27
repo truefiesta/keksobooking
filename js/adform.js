@@ -4,6 +4,14 @@
   var MODE_INACTIVE = window.utils.MODE_INACTIVE;
   var getSelectedOption = window.utils.getSelectedOption;
   var FILE_TYPES = ['jpg', 'jpeg', 'png'];
+  var GUESTS_CUSTOM_VALIDITY_MESSAGE = 'Количество гостей не соответствует количеству комнат.';
+  var PHOTO_ALT_TEXT = 'Фотография жилья';
+  var typeValueToMinPriceValue = {
+    'flat': 1000,
+    'bungalo': 0,
+    'house': 5000,
+    'palace': 10000
+  };
 
   /**
    * @description Function sets address in the ad-form address field as a string {x, y}.
@@ -32,7 +40,7 @@
     } else if ((guestsValue !== 0) && (roomsValue !== 100) && (guestsValue <= roomsValue)) {
       adFormGuests.setCustomValidity('');
     } else {
-      adFormGuests.setCustomValidity('Количество гостей не соответствует количеству комнат.');
+      adFormGuests.setCustomValidity(GUESTS_CUSTOM_VALIDITY_MESSAGE);
     }
   };
 
@@ -43,17 +51,6 @@
     checkRoomsAndGuestsValidity(guestsCurrentValue, roomsCurrentValue);
   };
 
-  // Поле «Тип жилья» влияет на минимальное значение поля «Цена за ночь»
-  var getMinPriceForOfferType = function (selectedTypeValue) {
-    switch (selectedTypeValue) {
-      case 'flat': return 1000;
-      case 'bungalo': return 0;
-      case 'house': return 5000;
-      case 'palace': return 10000;
-    }
-    return 0;
-  };
-
   // Находим поле для ввода цены за ночь и поле для выбора типа жилья.
   var adFormPrice = adForm.querySelector('input[name = price]');
   var adFormTypes = adForm.querySelector('select[name = type]');
@@ -61,7 +58,7 @@
   // Определяем выбранное значение в поле с типом предложения.
   var onOfferTypeChange = function (evt) {
     var adFormSelectedType = getSelectedOption(evt.target);
-    adFormPrice.min = getMinPriceForOfferType(adFormSelectedType.value);
+    adFormPrice.min = typeValueToMinPriceValue[adFormSelectedType.value];
     adFormPrice['placeholder'] = adFormPrice.min;
   };
 
@@ -71,12 +68,11 @@
 
   // Обработчик изменения времени вьезда и выезда.
   var onCheckinTimesChange = function (evt) {
-    var element = evt.target;
     var checkinTime = getSelectedOption(adCheckinTimes).value;
     var checkoutTime = getSelectedOption(adCheckoutTimes).value;
 
     if (checkinTime !== checkoutTime) {
-      if (element === adCheckinTimes) {
+      if (evt.target === adCheckinTimes) {
         adCheckoutTimes.value = checkinTime;
       } else {
         adCheckinTimes.value = checkoutTime;
@@ -86,7 +82,6 @@
 
   // Функция для создания обработчика при загрузке/изменении картинок в форме ad-form.
   var createPictureChangeListener = function (filePreviewElement) {
-    var picturePreview = filePreviewElement;
 
     return function (evt) {
       var pictureFile = evt.target.files[0];
@@ -98,15 +93,15 @@
         });
 
         if (isApprortiateFormat) {
-          var picturePreviewImg = picturePreview.querySelector('img');
+          var picturePreviewImg = filePreviewElement.querySelector('img');
 
           if (!picturePreviewImg) {
             var img = document.createElement('img');
-            img.alt = 'Фотография жилья';
+            img.alt = PHOTO_ALT_TEXT;
             img.width = 70;
             img.height = 70;
-            picturePreview.appendChild(img);
-            picturePreviewImg = picturePreview.querySelector('img');
+            filePreviewElement.appendChild(img);
+            picturePreviewImg = filePreviewElement.querySelector('img');
           }
 
           var reader = new FileReader();
@@ -145,6 +140,17 @@
     adFormPhotoPreview.innerHTML = '';
   };
 
+  var onInvalidFormElement = function (evt) {
+    evt.target.parentElement.classList.add('ad-form__invalid');
+  };
+
+  // Находим все элементы формы и создаем из них массивы.
+  var allAdFormInputs = Array.from(adForm.querySelectorAll('input'));
+  var allAdFormSelects = Array.from(adForm.querySelectorAll('select'));
+  var allAdFormTextareas = Array.from(adForm.querySelectorAll('textarea'));
+  // Объединяем все элементы формы в один массив.
+  var allAdFormElements = allAdFormInputs.concat(allAdFormSelects, allAdFormTextareas);
+
   // Функция для добавления слушателей на поля формы ad-form.
   var addAdFormListeners = function () {
     // Навешиваем слушатель события измненения на поле тип жилья.
@@ -158,6 +164,10 @@
     // Навешиваем слушатели события изменения аватарки и фотографии.
     adformAvatar.addEventListener('change', onAvatarChange);
     adFormPhoto.addEventListener('change', onAdFormPhotoChange);
+    // Добавляем слушатели события invalid на все элементы формы.
+    allAdFormElements.forEach(function (adFormInput) {
+      adFormInput.addEventListener('invalid', onInvalidFormElement);
+    });
   };
 
   // Функция для удаления слушателей с полей формы ad-form.
@@ -169,12 +179,24 @@
     adFormRooms.removeEventListener('change', onRoomsOrGuestsChange);
     adformAvatar.removeEventListener('change', onAvatarChange);
     adFormPhoto.removeEventListener('change', onAdFormPhotoChange);
+    allAdFormElements.forEach(function (adFormInput) {
+      adFormInput.removeEventListener('invalid', onInvalidFormElement);
+    });
+  };
+
+  // Запоминаем начальное минимальное значение цены.
+  var adFormDefaultMinPrice = adFormPrice.min;
+  // Функция устанавливает начальное минимальное значение цены.
+  var setDefaultMinPrice = function () {
+    adFormPrice.min = adFormDefaultMinPrice;
+    adFormPrice['placeholder'] = adFormDefaultMinPrice;
   };
 
   var resetAdFormElements = function () {
     restoreDefaultAdFormAvatar();
     resetAdFormPhoto();
     removeAdFormListeners();
+    setDefaultMinPrice();
   };
 
   window.adform = {

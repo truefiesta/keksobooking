@@ -9,6 +9,7 @@
   var loadOffers = window.offers.load;
   var addAdFormListeners = window.adform.addListeners;
   var addFiltersFormListener = window.filter.addListener;
+  var addMessageListeners = window.message.addListeners;
   var MODE_ACTIVE = window.utils.MODE_ACTIVE;
   var ENTER_KEY = window.utils.ENTER_KEY;
   var MAIN_PIN_INITIAL_WIDTH = window.map.MAIN_PIN_INITIAL_WIDTH;
@@ -43,6 +44,13 @@
     mapPinMain.addEventListener('keydown', onMapPinEnterKeyDown);
   };
 
+  // Переменная для хранения коллбэка функции setAdFormActivator.
+  var activateAdForm;
+  // Функция вызывается из модуля offerSubmition и в качестве коллбэка получает функцию для добавления слушателей собыйтий reset и submit формы ad-form.
+  var setAdFormActivator = function (cb) {
+    activateAdForm = cb;
+  };
+
   // Полная активация сервиса.
   var activatePage = function () {
     activateMapAndForms();
@@ -50,6 +58,8 @@
     setMainPinEventListeners();
     addAdFormListeners();
     addFiltersFormListener();
+    addMessageListeners();
+    activateAdForm();
   };
 
   // Активация страницы при нажатии главной кнопкой мыши на главную метку.
@@ -136,7 +146,8 @@
   mapPinMain.addEventListener('keydown', onMapPinEnterKeyDown);
 
   window.mainPin = {
-    resetEventListeners: resetMainPinEventListeners
+    resetEventListeners: resetMainPinEventListeners,
+    setAdFormActivator: setAdFormActivator
   };
 
 })();

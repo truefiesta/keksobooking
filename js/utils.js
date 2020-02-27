@@ -22,7 +22,7 @@
    * @param {Array} array, from which you want to get a random item.
    * @return {*} - random array item
    */
-  var getRandomElemenFromArray = function (array) {
+  var getRandomElementFromArray = function (array) {
     return array[getRandomInteger(0, array.length - 1)];
   };
 
@@ -36,7 +36,7 @@
     var resultArray = [];
 
     for (var i = 0; i < resultArrayLength; i++) {
-      resultArray[i] = getRandomElemenFromArray(dictionary);
+      resultArray[i] = getRandomElementFromArray(dictionary);
     }
 
     return resultArray;
@@ -122,7 +122,7 @@
     ESC_KEY: ESC_KEY,
     MODE_ACTIVE: MODE_ACTIVE,
     MODE_INACTIVE: MODE_INACTIVE,
-    getRandomElemenFromArray: getRandomElemenFromArray,
+    getRandomElementFromArray: getRandomElementFromArray,
     getRandomInteger: getRandomInteger,
     generateArrayOfStrings: generateArrayOfStrings,
     hideElement: hideElement,

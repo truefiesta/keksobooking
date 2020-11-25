@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
   var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
   var URL_SAVE = 'https://js.dump.academy/keksobooking';
   var TIMEOUT = 10000;
@@ -57,11 +58,11 @@
   };
 
   var load = function (onLoad, onError) {
-    sendRequest('GET', URL_LOAD, null, onLoad, onError);
+    sendRequest('GET', PROXY_URL + URL_LOAD, null, onLoad, onError);
   };
 
   var save = function (data, onLoad, onError) {
-    sendRequest('POST', URL_SAVE, data, onLoad, onError);
+    sendRequest('POST', PROXY_URL + URL_SAVE, data, onLoad, onError);
   };
 
   window.upload = {
